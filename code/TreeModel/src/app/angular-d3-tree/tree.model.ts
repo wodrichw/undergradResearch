@@ -1,8 +1,8 @@
+
 import * as d3 from 'd3';
 
 /* based on http://bl.ocks.org/robschmuecker/7880033 */
 export class TreeModel {
-
   root: any;
   treeLayout: any;
   svg: any;
@@ -184,9 +184,11 @@ export class TreeModel {
     nodeEnter
       .on('click', function(d) {
         treeModel.click(d, this);
-        treeModel.update(d);
-      });
+        treeModel.update(d); });
+    nodeEnter
+      .on('mouseover', d => this.nodeHover(d));
   }
+
 
   setLinks( source: any, treeData: any) {
     // adds the links between the nodes
@@ -209,15 +211,21 @@ export class TreeModel {
     if (d.children) {
         d._children = d.children;
         d.children = null;
-
         domNode.classList.remove('selected');
     } else {
       d.children = d._children;
       d._children = null;
-
       domNode.classList.add('selected');
     }
     this.selectedNodeByClick = d;
     this.previousClickedDomNode = domNode;
+    this.nodeselected(d);
   }
+  nodeHover(d) {
+    // console.log(d);
+  }
+
+  // events
+  nodeselected(node) {}
+
 }

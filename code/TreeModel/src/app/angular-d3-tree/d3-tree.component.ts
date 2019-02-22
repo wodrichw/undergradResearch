@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, Input, Output, EventEmitter} from '@angular/core';
-import { D3TreeService } from './d3-tree.service';
+import { TreeModel } from './tree.model';
 
 @Component({
   selector: 'app-d3-tree',
@@ -9,16 +9,34 @@ import { D3TreeService } from './d3-tree.service';
 export class D3TreeComponent {
   @ViewChild('chart') private chartContainer: ElementRef;
   @Input() private treeData: any= [];
-  @Output() onNodeChanged: EventEmitter<any> = new EventEmitter();
-  @Output() onNodeSelected: EventEmitter<any> = new EventEmitter();
+  @Output() onNodeSelected: EventEmitter<any>= new EventEmitter();
 
-  constructor( private treeService: D3TreeService ) { }
+  treeModel: TreeModel = new TreeModel();
+
+  constructor() {
+    this.setNodeSelectedListener(d => this.onNodeSelected.emit(d));
+  }
+
+  createChart(chartContainer, treeData): void {
+    const element = chartContainer.nativeElement;
+    element.innerHTML = '';
+    this.treeModel.addSvgToContainer(chartContainer);
+    this.treeModel.createLayout();
+    this.treeModel.createTreeData(treeData);
+  }
+  update() {
+    this.treeModel.update(this.treeModel.root);
+  }
 
   ngOnChanges(changes: any) {
-    console.log(`CHANGES:  ${changes.toString()}`);
+    console.log('CHANGES:', changes);
     if (!!this.treeData) {
-      this.treeService.createChart(this.chartContainer, this.treeData);
-      this.treeService.update();
+      this.createChart(this.chartContainer, this.treeData);
+      this.update();
     }
+  }
+
+  setNodeSelectedListener(callable){
+    this.treeModel.nodeselected = callable;
   }
 }

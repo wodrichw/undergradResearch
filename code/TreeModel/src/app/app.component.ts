@@ -16,13 +16,7 @@ export class AppComponent implements OnInit{
     this.data = this.tree.d3Obj;
   }
 
-
-  nodeUpdated(node) {
-    console.log('app detected node change');
-  }
-
   nodeSelected(node){
-    console.log('app detected node selected', node);
-    this.selectedNode = node;
+    console.log(node)
   }
 }
