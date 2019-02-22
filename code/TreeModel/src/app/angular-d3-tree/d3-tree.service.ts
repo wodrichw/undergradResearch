@@ -18,16 +18,11 @@ export class D3TreeService {
   update() {
     this.treeModel.update(this.treeModel.root);
   }
+  // setNodeChangedListener(callable) {
+  //   this.treeModel.nodechanged = callable;
+  // }
 
-  setNodeChangedListener(callable) {
-    this.treeModel.nodechanged = callable;
-  }
-
-  setNodeSelectedListener(callable) {
-    this.treeModel.nodeselected = callable;
-  }
-
-  addNode(node: any) {
-    this.treeModel.addNode(node);
-  }
+  // setNodeSelectedListener(callable) {
+  //   this.treeModel.nodeselected = callable;
+  // }
 }

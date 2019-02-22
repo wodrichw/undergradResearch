@@ -20,17 +20,7 @@ export class ExclusionTree {
         this.d3Obj = bt.d3Obj;
     }
 
-    buildTree(n: Node, currentDepth, maxDepth, idx: number): {node: Node, d3Obj: any[]} {
-        function buildD3Obj(exclusion: string, idx: number) {
-            if (idx === 1) {
-                return [{id: idx.toString(), description: exclusion}];
-            }
-            return [{ id: idx.toString(),
-                     parent: Math.floor(idx / 2).toString(),
-                     description: exclusion
-                   }];
-        }
-
+    buildTree(n: Node, currentDepth, maxDepth, idx: number): {node: Node, d3Obj: any} {
         if (currentDepth === maxDepth) {
             return {node: null, d3Obj: []};
         }
@@ -40,7 +30,7 @@ export class ExclusionTree {
         const btRight = this.buildTree(new Node (children[1], n), currentDepth + 1, maxDepth, idx * 2 + 1);
         n.left = btLeft.node;
         n.right = btRight.node;
-        const d3Obj = buildD3Obj(n.exclusion, idx).concat(btLeft.d3Obj).concat(btRight.d3Obj);
+        const d3Obj = {name: n.exclusion, children: [btLeft.d3Obj, btRight.d3Obj]};
         return {node: n, d3Obj};
     }
 

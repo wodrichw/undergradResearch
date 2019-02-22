@@ -1,35 +1,30 @@
 import * as d3 from 'd3';
+import { D3TreeComponent } from './d3-tree.component';
+import { rootRenderNodes } from '@angular/core/src/view';
 
 /* based on http://bl.ocks.org/robschmuecker/7880033 */
 export class TreeModel {
 
-  root: any;
   treeLayout: any;
   svg: any;
+  gLink: any;
+  gNode: any;
+  root: any;
 
   treeData: any;
+
+  dx = 10;
+  dy = 120;
 
   height: number;
   width: number;
   margin: any = { top: 200, bottom: 90, left: 100, right: 90};
-  duration: number = 750;
-  nodeWidth: number = 1;
-  nodeHeight: number = 1;
-  nodeRadius: number = 5;
-  horizontalSeparationBetweenNodes: number = 1;
-  verticalSeparationBetweenNodes: number = 1;
-  nodeTextDistanceY: string = '-5px';
-  nodeTextDistanceX: number = 5;
-
-  dragStarted: boolean;
-  draggingNode: any;
-  nodes: any[];
-  selectedNodeByDrag: any;
-
-  selectedNodeByClick: any;
-  previousClickedDomNode: any;
-
-  constructor() {}
+  duration = 750;
+  nodeWidth = 1;
+  nodeHeight = 1;
+  nodeRadius = 5;
+  horizontalSeparationBetweenNodes = 1;
+  verticalSeparationBetweenNodes = 1;
 
   addSvgToContainer(chartContainer: any) {
     const element = chartContainer.nativeElement;
@@ -40,377 +35,145 @@ export class TreeModel {
     this.svg = d3.select(element).append('svg')
       .attr('width', element.offsetWidth)
       .attr('height', element.offsetHeight)
-      .append('g')
-      .attr('transform', 'translate('
-            + this.margin.left + ',' + this.margin.top + ')');
+      // .attr('viewBox', [-margin.left, -margin.top, width, dx])
+      .style('font', '10px sans-serif')
+      .style('user-select', 'none');
 
-    this.setZoomBehaviour();
-  }
+    this.gLink = this.svg.append('g')
+      .attr('fill', 'none')
+      .attr('stroke', '#555')
+      .attr('stroke-opacity', 0.4)
+      .attr('stroke-width', 1.5);
 
-  setZoomBehaviour() {
-    const zoom = d3.zoom().on('zoom', zoomed );
-    const svg = d3.select('svg');
-
-    const t = d3.zoomIdentity.translate(this.margin.left, this.margin.top);
-    svg.call(zoom.transform, t);
-    svg.call(zoom);
-    function zoomed() {
-      d3.event.transform;
-      d3.select('g').attr('transform', d3.event.transform);
-    }
+    this.gNode = this.svg.append('g')
+      .attr('cursor', 'pointer');
   }
 
   createLayout() {
     this.treeLayout = d3.tree()
       .size([this.height, this.width])
       .nodeSize([this.nodeWidth + this.horizontalSeparationBetweenNodes, this.nodeHeight + this.verticalSeparationBetweenNodes])
-      .separation((a, b) => {return a.parent == b.parent ? 20 : 40});
+      .separation((a, b) => a.parent === b.parent ? 20 : 40);
   }
 
   createTreeData(treeData: any) {
-    this.root = d3.stratify<any>()
-          .id(function(d) { return d.id; })
-          .parentId(function(d) { return d.parent; })
-          (treeData);
+    // this.root = d3.hierarchy({name: 'hi', children: [{name: 'ho'}, {name: 'he'}]});
+    this.root = d3.hierarchy(treeData);
+
     this.root.x0 = this.height / 2;
     this.root.y0 = 0;
 
-    this.root.children.map((d) => this.collapse(d));
+    this.root.descendants().forEach((d, i) => {
+      d.id = i;
+      d._children = d.children;
+    });
   }
 
-  collapse(d) {
-    if (d.children) {
-      d._children = d.children
-      d._children.map((d) => this.collapse(d));
-      d.children = null
-    }
-  }
-  expand(d) {
-    if (d._children) {
-      d.children = d._children
-      d.children.map((d) => this.expand(d));
-      d.children = null
-    }
-  }
-  expandAndFixHeight(d, newParent) {
-    d.height = newParent.height - 1;
-    d.depth = newParent.depth + 1;
-
-    if (d._children) {
-      d.children = d._children;
-      d._children = null;
-    }
-    if (d.children) {
-      d.children.map((child) => this.expandAndFixHeight(child, d));
-    }
-  }
   update(source) {
-    const treeData = this.treeLayout(this.root);
-    this.setNodes(source, treeData);
-    this.setLinks(source, treeData);
-  }
+    function diagonal(s, d) {
+      const path = `M ${s.x} ${s.y}
+              C ${(s.x + d.x) / 2} ${s.y},
+                ${(s.x + d.x) / 2} ${d.y},
+                ${d.x} ${d.y}`;
+      return path;
+    }
+    const tree = d3.tree().nodeSize([this.dx, this.dy]);
 
-  setNodes(source: any, treeData: any) {
-    const nodes = treeData.descendants();
-    const treeModel = this;
+    const duration = d3.event && d3.event.altKey ? 2500 : 750;
+    const nodes = this.root.descendants().reverse();
+    const links = this.root.links().slice(1);
 
-    nodes.forEach(function(d) { d.y = d.depth * 180});
+    // Compute the new tree layout.
+    tree(this.root);
 
-    const node = this.svg.selectAll('g.node')
-        .data(nodes, function(d) {return d.id || (d.id = ++this.i); });
+    let left = this.root;
+    let right = this.root;
+    this.root.eachBefore(node => {
+      if (node.x < left.x) left = node;
+      if (node.x > right.x) right = node;
+    });
 
+    const height = right.x - left.x + this.margin.top + this.margin.bottom;
+
+    const transition = this.svg.transition()
+        .duration(duration)
+        .attr('height', height)
+        .attr('viewBox', [-this.margin.left, left.x - this.margin.top, this.width, height]);
+        // .tween('resize', window.ResizeObserver ? null : () => () => svg.dispatch('toggle'));
+
+    // Update the nodes…
+    const node = this.gNode.selectAll('g')
+      .data(nodes, d => d.id);
+
+    // Enter any new nodes at the parent's previous position.
     const nodeEnter = node.enter().append('g')
-        .attr('class', 'node')
-        .attr('transform', function(d) {
-            return 'translate(' + source.y0 + ',' + source.x0 + ')';
+        .attr('transform', d => `translate(${source.y0},${source.x0})`)
+        .attr('fill-opacity', 0)
+        .attr('stroke-opacity', 0)
+        .on('click', d => {
+          d.children = d.children ? null : d._children;
+          this.update(d);
         });
 
     nodeEnter.append('circle')
-        .attr('class', 'node')
-        .attr('r', 1e-6)
-        .style('fill', function(d) {
-            return d._children ? 'lightsteelblue' : '#fff';
-        });
+        .attr('r', 2.5)
+        .attr('fill', d => d._children ? '#555' : '#999');
 
     nodeEnter.append('text')
-        .attr('dy', this.nodeTextDistanceY )
-        .attr('x', function(d) {
-            return d.children || d._children ? -1 : 1;
-        })
-        .attr('text-anchor', function(d) {
-            return d.children || d._children ? 'end' : 'start';
-        })
-        .text(function(d) {
-              return d.data.name || d.data.description || d.id;
-            });
+        .attr('dy', '0.31em')
+        .attr('x', d => d._children ? -6 : 6)
+        .attr('text-anchor', d => d._children ? 'end' : 'start')
+        .text(d => d.data.name)
+      .clone(true).lower()
+        .attr('stroke-linejoin', 'round')
+        .attr('stroke-width', 3)
+        .attr('stroke', 'white');
 
-    nodeEnter.append('circle')
-        .attr('class', 'ghostCircle')
-        .attr('r', this.nodeRadius * 2)
-        .attr('opacity', 0.2) // change this to zero to hide the target area
-        .style('fill', 'red')
-        .attr('pointer-events', 'mouseover')
-        .on('mouseover', function(node) {
-            treeModel.overCircle(node);
-            this.classList.add('over');
-        })
-        .on('mouseout', function(node) {
-            treeModel.outCircle(node);
-            this.classList.remove('over');
-        });
-    const nodeUpdate = nodeEnter.merge(node);
+    // Transition nodes to their new position.
+    const nodeUpdate = node.merge(nodeEnter).transition(transition)
+        .attr('transform', d => `translate(${d.y},${d.x})`)
+        .attr('fill-opacity', 1)
+        .attr('stroke-opacity', 1);
 
-    nodeUpdate.transition()
-      .duration(this.duration)
-      .attr('transform', function(d) {
-          return 'translate(' + d.y + ',' + d.x + ')';
-       });
+    // Transition exiting nodes to the parent's new position.
+    const nodeExit = node.exit().transition(transition).remove()
+        .attr('transform', d => `translate(${source.y},${source.x})`)
+        .attr('fill-opacity', 0)
+        .attr('stroke-opacity', 0);
 
-    nodeUpdate.select('circle.node')
-      .attr('r', this.nodeRadius)
-      .style('fill', function(d) {
-          return d._children ? 'lightsteelblue' : '#fff';
-      })
-      .attr('cursor', 'pointer');
-
-    const nodeExit = node.exit().transition()
-        .duration(this.duration)
-        .attr('transform', function(d) {
-            return 'translate(' + source.y + ',' + source.x + ')';
-        })
-        .remove();
-
-    // On exit reduce the node circles size to 0
-    nodeExit.select('circle')
-      .attr('r', 1e-6);
-
-    // Store the old positions for transition.
-    nodes.forEach(function(d) {
-      d.x0 = d.x;
-      d.y0 = d.y;
-    });
-    // On exit reduce the opacity of text labels
-    nodeExit.select('text')
-      .style('fill-opacity', 1e-6);
-
-    nodeEnter
-      .call(this.dragBehaviour())
-      .on('click', function(d) {
-        treeModel.click(d, this);
-        treeModel.update(d);
-      });
-  }
-
-  dragBehaviour() {
-    const treeModel = this;
-    function subject(d) {
-        return { x: d3.event.x, y: d3.event.y }
-    }
-    function dragStart(d) {
-      treeModel.draggingNode = d;
-      d3.select(this).classed('active', true);
-
-      d3.select(this).select('.ghostCircle').attr('pointer-events', 'none');
-      d3.selectAll('.ghostCircle').attr('class', 'ghostCircle show');
-
-      treeModel.nodes = d.descendants();
-      treeModel.dragStarted = true;
-    }
-
-    function dragged(d) {
-      d3.select(this)
-        .attr('transform', 'translate(' + d3.event.x + ',' + d3.event.y + ')');
-
-      if (treeModel.dragStarted) {
-        treeModel.svg.selectAll('g.node').sort((a, b) => { // select the parent and sort the path's
-            if (a.id != treeModel.draggingNode.id) return 1; // a is not the hovered element, send "a" to the back
-            else return -1; // a is the hovered element, bring "a" to the front
-        });
-
-        // if nodes has children, remove the links and nodes
-        const childs = d.descendants();
-        if (childs.length > 1) {
-            // remove link paths
-            treeModel.svg.selectAll('path.link').filter(function(d, i) {
-                  if (d.id == treeModel.draggingNode.id) {
-                      return true;
-                  }
-                  return false;
-              }).remove();
-
-            // remove child nodes
-            treeModel.svg.selectAll('g.node')
-                .data(treeModel.nodes, function(d) {
-                    return d.id;
-                }).filter(function(d, i) {
-                    if (d.id == treeModel.draggingNode.id) {
-                        return false;
-                    }
-                    return true;
-                }).remove();
-        }
-
-        // remove parent link
-        d.links(d.parent.descendants());
-        treeModel.svg.selectAll('path.link').filter(function(d, i) {
-            if (d.id == treeModel.draggingNode.id) {
-                return true;
-            }
-            return false;
-        }).remove();
-
-        treeModel.dragStarted = false;
-      }
-
-    }
-
-    function dragEnd(d) {
-      d3.select(this).classed('active', false);
-
-      d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
-      d3.select(this).attr('class', 'node');
-
-      if (d == treeModel.root) {
-          return;
-      }
-      const domNode = this;
-      if (treeModel.selectedNodeByDrag) {
-          // now remove the element from the parent, and insert it into the new elements children
-          const index = treeModel.draggingNode.parent.children.indexOf(treeModel.draggingNode);
-          if (index > -1) {
-              treeModel.draggingNode.parent.children.splice(index, 1);
-          }
-          if (treeModel.selectedNodeByDrag.children != null || treeModel.selectedNodeByDrag._children != null ) {
-              if (treeModel.selectedNodeByDrag.children != null ) {
-                  treeModel.selectedNodeByDrag.children.push(treeModel.draggingNode);
-              } else {
-                  treeModel.selectedNodeByDrag._children.push(treeModel.draggingNode);
-              }
-          } else {
-              treeModel.selectedNodeByDrag.children = [treeModel.draggingNode];
-          }
-          //set new parent
-          treeModel.draggingNode.parent = treeModel.selectedNodeByDrag;
-          // Make sure that the node being added to is expanded so user can see added node is correctly moved
-          treeModel.expandAndFixHeight(treeModel.draggingNode, treeModel.selectedNodeByDrag);
-          //sortTree();
-          treeModel.nodechanged(treeModel.draggingNode);
-          endDrag(domNode);
-      } else {
-          endDrag(domNode);
-      }
-    }
-
-    function endDrag(domNode) {
-        d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
-        d3.select(domNode).attr('class', 'node');
-        // now restore the mouseover event or we won't be able to drag a 2nd time
-        d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
-
-        if (treeModel.draggingNode !== null) {
-            treeModel.update(treeModel.root);
-            //centerNode(treeModel.draggingNode);
-            treeModel.draggingNode = null;
-        }
-
-        treeModel.selectedNodeByDrag = null;
-    }
-
-    return d3.drag()
-            .subject(subject)
-            .on('start', dragStart)
-            .on('drag', dragged)
-            .on('end', dragEnd);
-  }
-
-  overCircle(d) {
-      this.selectedNodeByDrag = d;
-  };
-  outCircle(d) {
-      this.selectedNodeByDrag = null;
-  };
-
-  setLinks( source: any, treeData: any) {
-    const links = treeData.descendants().slice(1);
-    const link = this.svg.selectAll('path.link')
-        .data(links, function(d) { return d.id; });
+    // Update the links…
+    const link = this.gLink.selectAll('path.link')
+      .data(links, d => d.id);
 
     // Enter any new links at the parent's previous position.
     const linkEnter = link.enter().insert('path', 'g')
         .attr('class', 'link')
         .attr('d', (d) => {
-          const o = {x: source.x0, y: source.y0}
-          return this.diagonalCurvedPath(o, o)
+          let o = {y: source.y0, x: source.x0};
+          return diagonal(o, o);
         });
-
+    // Transition links to their new position.
+     // UPDATE
     const linkUpdate = linkEnter.merge(link);
+    console.log(linkUpdate)
 
-    linkUpdate.transition()
-        .duration(this.duration)
-        .attr('d', (d) => {return this.diagonalCurvedPath(d, d.parent)});
+    // Transition back to the parent element position
+    // linkUpdate.transition()
+    //     .attr('d', diagonal);
 
-    const linkExit = link.exit().transition()
-        .duration(this.duration)
-        .attr('d', (d) => {
-          const o = {x: source.x, y: source.y}
-          return this.diagonalCurvedPath(o, o)
-        })
-        .remove();
+    // // Remove any exiting links
+    // const linkExit = link.exit().transition()
+    //     .duration(duration)
+    //     .attr('d', d => {
+    //       const o = {x: source.x, y: source.y}
+    //       return diagonal(o, o);
+    //     })
+    //     .remove();
+
+    // Stash the old positions for transition.
+    this.root.eachBefore(d => {
+      d.x0 = d.x;
+      d.y0 = d.y;
+    });
   }
-
-  click(d, domNode) {
-    if (this.previousClickedDomNode)
-      this.previousClickedDomNode.classList.remove('selected');
-    if (d.children) {
-        d._children = d.children;
-        d.children = null;
-
-        domNode.classList.remove('selected');
-    } else {
-      d.children = d._children;
-      d._children = null;
-
-      domNode.classList.add('selected');
-    }
-    this.selectedNodeByClick = d;
-    this.previousClickedDomNode = domNode;
-    this.nodeselected(d);
-  }
-
-  // Creates a curved (diagonal) path from parent to the child nodes
-  diagonalCurvedPath(s, d) {
-
-    const path = `M ${s.y} ${s.x}
-            C ${(s.y + d.y) / 2} ${s.x},
-              ${(s.y + d.y) / 2} ${d.x},
-              ${d.y} ${d.x}`
-
-    return path
-  }
-
-  radialPoint(x, y) {
-    return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
-  }
-
-  addNode(newNode: any) {
-    if (this.selectedNodeByClick) {
-      if (this.selectedNodeByClick.children)
-        this.selectedNodeByClick.children.push(newNode);
-      else if (this.selectedNodeByClick._children)
-        this.selectedNodeByClick._children.push(newNode);
-      else
-        this.selectedNodeByClick.children = [newNode];
-      this.update(this.selectedNodeByClick);
-    } else {
-      this.root.children.push(newNode);
-      this.update(this.root);
-    }
-  }
-
-  //events
-  nodechanged(node) {
-    console.info('nodechanged default');
-  }
-  nodeselected(node) {}
-
 }
