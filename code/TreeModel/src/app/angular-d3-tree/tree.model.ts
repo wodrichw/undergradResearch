@@ -21,15 +21,9 @@ export class TreeModel {
   nodeTextDistanceY: string = '-5px';
   nodeTextDistanceX: number = 5;
 
-  dragStarted: boolean;
-  draggingNode: any;
-  nodes: any[];
-  selectedNodeByDrag: any;
 
   selectedNodeByClick: any;
   previousClickedDomNode: any;
-
-  constructor() {}
 
   addSvgToContainer(chartContainer: any) {
     const element = chartContainer.nativeElement;
@@ -151,11 +145,11 @@ export class TreeModel {
         .attr('opacity', 0.2) // change this to zero to hide the target area
         .style('fill', 'darkblue')
         .attr('pointer-events', 'mouseover');
-        
     const nodeUpdate = nodeEnter.merge(node);
 
     nodeUpdate.transition()
-      .duration(this.duration)
+      // .duration(this.duration)
+      .duration(0)
       .attr('transform', function(d) {
           return 'translate(' + d.y + ',' + d.x + ')';
        });
@@ -194,38 +188,24 @@ export class TreeModel {
       });
   }
 
-
   setLinks( source: any, treeData: any) {
-    const links = treeData.descendants().slice(1);
-    const link = this.svg.selectAll('path.link')
-        .data(links, function(d) { return d.id; });
-
-    // Enter any new links at the parent's previous position.
-    const linkEnter = link.enter().insert('path', 'g')
-        .attr('class', 'link')
-        .attr('d', (d) => {
-          const o = {x: source.x0, y: source.y0}
-          return this.diagonalCurvedPath(o, o)
-        });
-
-    const linkUpdate = linkEnter.merge(link);
-
-    linkUpdate.transition()
-        .duration(this.duration)
-        .attr('d', (d) => {return this.diagonalCurvedPath(d, d.parent)});
-
-    const linkExit = link.exit().transition()
-        .duration(this.duration)
-        .attr('d', (d) => {
-          const o = {x: source.x, y: source.y}
-          return this.diagonalCurvedPath(o, o)
-        })
-        .remove();
+    // adds the links between the nodes
+    this.svg.selectAll('line').remove();
+    this.svg.selectAll('path.link')
+        .data( treeData.descendants().slice(1))
+        .enter().append('line')
+        .attr('x1', (d) => d.y)
+        .attr('x2', (d) => d.parent.y)
+        .attr('y1', (d) => d.x)
+        .attr('y2', (d) => d.parent.x)
+        .attr('stroke-width', 1)
+        .attr('stroke', 'grey');
   }
 
   click(d, domNode) {
-    if (this.previousClickedDomNode)
+    if (this.previousClickedDomNode){
       this.previousClickedDomNode.classList.remove('selected');
+    }
     if (d.children) {
         d._children = d.children;
         d.children = null;
@@ -239,19 +219,5 @@ export class TreeModel {
     }
     this.selectedNodeByClick = d;
     this.previousClickedDomNode = domNode;
-  }
-
-  // Creates a curved (diagonal) path from parent to the child nodes
-  diagonalCurvedPath(s, d) {
-    const path = `M ${s.y} ${s.x}
-            C ${(s.y + d.y) / 2} ${s.x},
-              ${(s.y + d.y) / 2} ${d.x},
-              ${d.y} ${d.x}`;
-
-    return path
-  }
-
-  radialPoint(x, y) {
-    return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
   }
 }
