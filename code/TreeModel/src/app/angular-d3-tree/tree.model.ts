@@ -32,7 +32,7 @@ export class TreeModel {
   constructor() {}
 
   addSvgToContainer(chartContainer: any) {
-    let element = chartContainer.nativeElement;
+    const element = chartContainer.nativeElement;
 
     this.width = element.offsetWidth - this.margin.left - this.margin.right;
     this.height = element.offsetHeight - this.margin.top - this.margin.bottom;
@@ -51,7 +51,7 @@ export class TreeModel {
     const zoom = d3.zoom().on('zoom', zoomed );
     const svg = d3.select('svg');
 
-    var t = d3.zoomIdentity.translate(this.margin.left, this.margin.top);
+    const t = d3.zoomIdentity.translate(this.margin.left, this.margin.top);
     svg.call(zoom.transform, t);
     svg.call(zoom);
     function zoomed() {
@@ -111,15 +111,15 @@ export class TreeModel {
   }
 
   setNodes(source: any, treeData: any) {
-    let nodes = treeData.descendants();
-    let treeModel = this;
+    const nodes = treeData.descendants();
+    const treeModel = this;
 
     nodes.forEach(function(d) { d.y = d.depth * 180});
 
-    var node = this.svg.selectAll('g.node')
+    const node = this.svg.selectAll('g.node')
         .data(nodes, function(d) {return d.id || (d.id = ++this.i); });
 
-    var nodeEnter = node.enter().append('g')
+    const nodeEnter = node.enter().append('g')
         .attr('class', 'node')
         .attr('transform', function(d) {
             return 'translate(' + source.y0 + ',' + source.x0 + ')';
@@ -158,7 +158,7 @@ export class TreeModel {
             treeModel.outCircle(node);
             this.classList.remove('over');
         });
-    var nodeUpdate = nodeEnter.merge(node);
+    const nodeUpdate = nodeEnter.merge(node);
 
     nodeUpdate.transition()
       .duration(this.duration)
@@ -173,7 +173,7 @@ export class TreeModel {
       })
       .attr('cursor', 'pointer');
 
-    var nodeExit = node.exit().transition()
+    const nodeExit = node.exit().transition()
         .duration(this.duration)
         .attr('transform', function(d) {
             return 'translate(' + source.y + ',' + source.x + ')';
@@ -202,7 +202,7 @@ export class TreeModel {
   }
 
   dragBehaviour() {
-    let treeModel = this;
+    const treeModel = this;
     function subject(d) {
         return { x: d3.event.x, y: d3.event.y }
     }
@@ -273,10 +273,10 @@ export class TreeModel {
       if (d == treeModel.root) {
           return;
       }
-      let domNode = this;
+      const domNode = this;
       if (treeModel.selectedNodeByDrag) {
           // now remove the element from the parent, and insert it into the new elements children
-          var index = treeModel.draggingNode.parent.children.indexOf(treeModel.draggingNode);
+          const index = treeModel.draggingNode.parent.children.indexOf(treeModel.draggingNode);
           if (index > -1) {
               treeModel.draggingNode.parent.children.splice(index, 1);
           }
@@ -331,28 +331,28 @@ export class TreeModel {
   };
 
   setLinks( source: any, treeData: any) {
-    let links = treeData.descendants().slice(1);
-    var link = this.svg.selectAll('path.link')
+    const links = treeData.descendants().slice(1);
+    const link = this.svg.selectAll('path.link')
         .data(links, function(d) { return d.id; });
 
     // Enter any new links at the parent's previous position.
-    var linkEnter = link.enter().insert('path', 'g')
+    const linkEnter = link.enter().insert('path', 'g')
         .attr('class', 'link')
         .attr('d', (d) => {
-          var o = {x: source.x0, y: source.y0}
+          const o = {x: source.x0, y: source.y0}
           return this.diagonalCurvedPath(o, o)
         });
 
-    var linkUpdate = linkEnter.merge(link);
+    const linkUpdate = linkEnter.merge(link);
 
     linkUpdate.transition()
         .duration(this.duration)
         .attr('d', (d) => {return this.diagonalCurvedPath(d, d.parent)});
 
-    var linkExit = link.exit().transition()
+    const linkExit = link.exit().transition()
         .duration(this.duration)
         .attr('d', (d) => {
-          var o = {x: source.x, y: source.y}
+          const o = {x: source.x, y: source.y}
           return this.diagonalCurvedPath(o, o)
         })
         .remove();
