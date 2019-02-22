@@ -1,0 +1,228 @@
+\documentclass[11pt,leqno]{article}
+\usepackage{latexsym,amsfonts,amsmath,amssymb,verbatim,multicol,endnotes,amsthm}
+
+\usepackage[utf8]{inputenc}
+%\newcommand{\Z}{\mathbb{Z}}
+%\newcommand{\R}{\mathbb{R}}
+%\newcommand{\N}{\mathbb{N}}
+%\newcommand{\Q}{\mathbb{Q}}
+
+\newtheorem{maintheorem}{Theorem}
+\renewcommand{\themaintheorem}{\Alph{maintheorem}}
+\newtheorem{mainconjecture}[maintheorem]{Conjecture}
+\newtheorem{Theorem}{Theorem}[section]
+\newtheorem{Conjecture}[Theorem]{Conjecture}
+\newtheorem{Corollary}[Theorem]{Corollary}
+\newtheorem{Lemma}[Theorem]{Lemma}
+\newtheorem{Proposition}[Theorem]{Proposition}
+\newtheorem{Definition}[Theorem]{Definition}
+%
+%\newtheorem{Discuss}[Theorem]{Discussion Problem}%[section]
+%\newtheorem{Practice}[Theorem]{Practice Problem}
+\newtheorem{Example}[Theorem]{Example}
+
+\setlength{\textwidth}{13.8cm}
+\setlength{\textwidth}{6in}
+\setlength{\topmargin}{0.5cm}
+\setlength{\headheight}{0cm}
+\setlength{\headsep}{0cm}
+\setlength{\topskip}{0cm}
+\setlength{\textheight}{21.7cm}
+\setlength{\oddsidemargin}{1cm}
+\setlength{\evensidemargin}{1cm}
+\setlength{\labelwidth}{0cm}
+\setlength{\leftmargin}{0cm}
+\setlength{\listparindent}{0cm}
+\setlength{\baselineskip} {15pt}
+
+%\voffset = -10pt \topmargin = 0pt \headheight = -20pt \headsep = 0pt
+%
+%\textheight = 750pt
+%\textwidth = 485pt
+%\linespread{1.2} \hoffset = -20pt \marginparwidth = 0pt
+%\marginparpush = 0pt \evensidemargin = 0pt \oddsidemargin = 0pt
+%
+
+
+\newcommand{\sss}{\hspace{0.1in}}
+\newcommand{\op}{\subseteq^{\scriptstyle op}}
+\newcommand{\cl}{\subseteq^{\scriptstyle cl}}
+\newcommand{\tfr}[1]{\mbox{\rm rk}_{\Z}(#1)}
+\newcommand{\Ann}[1]{\mbox{\rm Ann}\,_{\Z #1}}\,
+\newcommand{\Res}[2]{\mbox{\rm Res}\,^{\Z #1}_{\Z #2}}\,
+\newcommand{\Cent}[1]{\mbox{\rm Cent}\,_{\Z #1}}\,
+\newcommand{\Sig}[2]{\Sigma({#1},{#2})}
+\newcommand{\Sigc}[2]{\Sigma({#1},{#2})^c}
+\newcommand{\ov}[1]{\overline{#1}}
+\def\qed{\hfill $\bullet$}
+\def\proof{\noindent {\em Proof:}\ }
+\def\solution{\noindent {\em Solution:}\ }
+\def\set-up{\noindent {\em Set-Up:}\ }
+\def\conclusion{\noindent {\em Conclusion:}\ }
+\def\answer{\noindent {\em Answer:}\ }
+
+\def\'{^\prime}
+\def\"{^{\prime\prime}}
+\def\<{\langle}
+\def\>{\rangle}
+\def\ra{\rightarrow}
+
+\def\C{\mathbb C}
+\def\R{\mathbb R}
+\def\Q{\mathbb Q}
+\def\E{\mathbb E}
+\def\H{\mathbb H}
+\def\S{\mathbb S}
+\def\F{\mathbb F}
+\def\Z{\mathbb Z}
+\def\im{{\rm im \,}}
+\def\ra{\rightarrow}
+\def\lra{\longrightarrow}
+\def\la{\leftarrow}
+\def\<{\langle}
+\def\>{\rangle}
+\def\lcm{\mbox{lcm}}
+%\def\'{\,^\prime}
+\def\"{\,^{\prime\prime}}
+\def\Ra{\Rightarrow}
+\def\iff{\Leftrightarrow}
+\def\ddx{\frac{d}{dx}\ }
+\def\ddt{\frac{d}{dt}\ }
+\def\dydx{\frac{dy}{dx}}
+\def\dudx{\frac{du}{dx}}
+\def\ddyddx{\frac{d^2y}{dx^2}}
+\def\intab{\int_a^b}
+\newcommand{\dd}[2]{\frac{d{#1}}{d{#2}}}
+\def\dis{\displaystyle}
+\def\sinOverx{\sin\left(\frac{1}{x}\right)}
+\def\arcsec{\mathrm{arcsec}\,}
+\def\arccsc{\mathrm{arccsc}\,}
+\def\arccot{\mathrm{arccot}\,}
+\def\lHop{l'H\^{o}pital's Rule\ }
+\def\LHop{L'H\^{o}pital's Rule\ }
+\def\ker{\mathrm{ker}\,}
+\newcommand{\G}{\Gamma}
+\newcommand{\pres}[2]{\langle {#1}\ |\ {#2} \rangle}
+\newcommand{\gpres}[1]{\langle {#1} \rangle}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+ 
+\usepackage{amsthm}
+ 
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+ 
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\usepackage{graphicx}
+
+
+\begin{document}
+\title{Split Lemma}
+\author{The Assemblers}
+\date{\today}
+\maketitle
+
+\subsection{Defintions}
+\begin{definition}[Parity]
+The number of ones in a binary string.
+\end{definition}
+
+\begin{definition}[Word]
+\end{definition}
+
+\begin{definition}[Word Tree]
+\end{definition}
+
+\begin{definition}[Word Group]
+\end{definition}
+
+\begin{definition}[Word List]
+\end{definition}
+
+\begin{definition}[Cardinality of a Word Group]
+\end{definition}
+
+\begin{definition}[Exclusion]
+\end{definition}
+
+\begin{definition}[Word Multiplication]
+\end{definition}
+
+\begin{definition}[Doubling Operation]
+	$\dot{2}g = \{wa | w \in g, a \in \{0, 1\}\}$
+\end{definition}
+
+\begin{definition}[Child]
+	$\bar{C}(A) = \{ab | a \in A, b \in \{0,1\}\}$
+\end{definition}
+
+\begin{definition}[Parent]
+	$P(A) = \{a | ab \in A, b \in \{0,1\}$
+\end{definition}
+
+\begin{definition}[Key Word]
+	Given a word group A with associated exclusion set $E$, $k$ is a key word of A if $\forall e \in E, e\notin kb, b \in \{0, 1\}$.
+\end{definition} 
+
+\begin{definition}[Exclusion Operator]
+	The Exclusion function $\Upsilon$ takes an unbalanced word list $\tilde{A}$ and a list of exclusions $E$, and gives a new list with all the exlusions removed.
+	$\Upsilon(\tilde{A}, E) = \{a | a \in \tilde{A} \sss and \sss \forall e \in E, e \dot{\notin} \tilde{A} \}$
+\end{definition}
+
+\begin{definition} [Subword]
+$\dot{\in}$
+\end{definition}
+
+
+\section{Introduction}
+Define ${\vec{o} \atop I}_{k-1}$ to be a word group that is of the form,
+$${\vec{o} \atop I}_{k-1} = \begin{bmatrix}
+	0 & 0 & \dots & & 0 \\
+	1 & 0 &\dots && 0 \\ 
+	0 & 1 & \dots && 0 \\
+	\vdots && \ddots &&\vdots \\
+	0 & 0 & \dots && 1
+	\end{bmatrix}.$$
+That is ${\vec{o} \atop I}_{k-1}$ takes the form of an Identity matrix with a zero vector hat. ${\vec{o} \atop I}$ has word length $k-1$ and list length $k$, that is $| {\vec{o} \atop I}_{k-1} | = k$.
+We aim to prove by induction that all word groups of the form ${\vec{o} \atop I}_{k-1}$ will have $k-2$ exlcusions and they will be of the form $\{11, 101, 1001, \dots, 10^{k-3}1\}$. Then we will show that this implies that every word list of this form will always generate two children lists, i.e yield a split. Given that our word tree will always have a branch of the form $\vec{o} \atop I$ for every $n$, our word tree will generate a split in every level. 
+
+\section {Base Case}
+Consider the simplest word group, 
+$$ {\vec{o} \atop I}_{0} = \begin{bmatrix}
+	0 \\ 
+	1
+\end{bmatrix} $$
+With list length of $n = 2$, note it has $n - 2$ exclusions, (i.e. no exclusions).
+Also consider the next simplest word group, 
+$$ {\vec{o} \atop I}_{1} =  \begin{bmatrix}
+	0 & 0 \\
+	1 & 0 \\
+	0 & 1 
+\end {bmatrix} $$
+With list length of $n = 3$, note it has $n-2$ exclusions, namely the exclusions $\{1, 1\}$.
+	
+Thus the base case, $ {\vec{o} \atop I}_{2} $ assumptions are met.
+
+\section {Induction Step}
+Assume that $ E_{k-2} = \{11, 101, 1001, \dots, 10^{k-3}1\} $ are $ k-2 $ exclusions of $ {\vec{o} \atop I}_{k-1} $.
+The goal is to show that ${\vec{o} \atop I}_{k}$ has $k-1$ exclusions, and that they are of the form, 
+$$ E_{k-1} = \{11, 101, 1001, \dots, 10^{k-3}1, 10^{k-2}1\}. $$
+
+Consider the new list $\dot{2} ({\vec{o} \atop I}_{k-1})$, with length $2k$.
+By defintion of how $\dot{2} ({\vec{o} \atop I}_{k-1})$ is generated, 
+	$$ E_{k-2} = \{11, 101, 1001, \dots, 10^{k-3}1 \} \sss \dot{\in} \sss \dot{2}( {\vec{o} \atop I}_{k-1}).$$
+
+Then, consider the operation,	
+	$$ \Upsilon( \dot{2} ({\vec{o} \atop I}_{k-1}), E_{k-2}) = {\vec{o} \atop I}_{k} \cap \{10^{k-2}1\}. $$
+
+By defintion ${\vec{o} \atop I}_{k} \cap \{10^{k-2}1\}$ is unbalanced since it has parity 2, $|10^{k-2}1| - |\vec{0}| = 2$. Thus $10^{k-2}1$ defines an exclusion for ${\vec{o} \atop I}_{k}$.
+Therefore ${\vec{o} \atop I}_{k}$ has $k-1$ exclusions of the form $E_{k-1} = \{11, 101, 1001, \dots, 10^{k-3}1, 10^{k-2}1\}$. 
+
+$\therefore$	A split will occur in every level n, $\forall n \in \mathbb{N}.$
+
+
+\end{document}

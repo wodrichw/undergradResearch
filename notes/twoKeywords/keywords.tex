@@ -1,0 +1,121 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{natbib}
+\usepackage{mathtools}
+\usepackage{graphicx}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\begin{document}
+    
+\section{Keywords}
+
+\begin{theorem}\label{mostlyEqual}
+    Any two unique keywords $w$ and $x$ s.t. $w = w_1w_2...w_{n}$, \\ $x = x_1x_2...x_{n}$ in a binary word list must be of the form $w_i = x_i;\ i \in \{2,3,...,n\}$.
+\end{theorem}
+\begin{proof}
+Let $A$ be a word list with distinct keywords $w$, $x$, s.t. $w = w_1w_2...w_{n}$, and $x = x_1x_2...x_{n}$ where $w_i,x_i,y_i \in \{0, 1\}$. 
+
+By definition of keyword, $\forall a \in A,\ \forall a' \subset a,\ \forall w' \subset we\ s.t.\ e \in \{0,1\},$ if $a'$ and $w'$ are the same length, then $\Big||a'| - |w'| \Big| \le 1$. This property is the same for $x$. Therefore, the following words are all contained in $A$.
+\begin{align*}
+    &w_2w_3...w_{n}0   \\
+    &w_2w_3...w_{n}1   \\ 
+    &x_2x_3...x_{n}0   \\ 
+    &x_2x_3...x_{n}1   
+\end{align*}
+
+Note that if $w_{n} \neq x_{n}$ then we get either case 
+\begin{align*}
+    &w_2w_3...w_{n-1}00 &               & w_2w_3...w_{n-1}10  \\
+    &w_2w_3...w_{n-1}01 &               & w_2w_3...w_{n-1}11  \\
+    &x_2x_3...x_{n-1}10 &or \hspace{2cm}& x_2x_3...x_{n-1}00  \\
+    &x_2x_3...x_{n-1}11 &               & x_2x_3...x_{n-1}01 
+\end{align*}
+In either case, $w$ and $x$ would violate the definition of balanced because \\ $|11|-|00| = 2 > 1$. Therefore $w_{n} = x_{n}$.
+
+Assume that 
+\begin{align*}
+    & w_{n} = x_{n} \\
+    & w_{n-1} = x_{n-1} \\
+    & \vdotswithin{w_{n-k} = x_{n-k}} \\
+    &w_{n-k} = x_{n-k}
+\end{align*}
+
+For convenience, let $e_i = w_{n-i};\ i \in \{2,...,k\}$. Note that if $w_{n-k-1} \neq x_{n-k-1}$ then we get either case
+\begin{align*}
+    &w_2w_3...w_{n-k-2}0e_i0 &               & w_2w_3...w_{n-k-2}1e_i0  \\
+    &w_2w_3...w_{n-k-2}0e_i1 &               & w_2w_3...w_{n-k-2}1e_i1  \\
+    &x_2x_3...x_{n-k-2}1e_i0 &or \hspace{2cm}& x_2x_3...x_{n-k-2}0e_i0  \\
+    &x_2x_3...x_{n-k-2}1e_i1 &               & x_2x_3...x_{n-k-2}0e_i1 
+\end{align*}
+In either case, $w$ and $x$ would violate the definition of balanced because \\ $|1e_i1| - |0e_i0| = 2 > 1$. Therefore $w_{n-k} = x_{n-k}$, and by induction 
+$$w_i = x_i;\ i \in \{2,3,...,n\}$$.
+\end{proof}
+
+\begin{lemma}
+    Any  word list has at most two keyword
+\end{lemma}
+\begin{proof}
+    Let $A$ be a word list of keywords  $w$, $x$ and $y$ s.t. $w = w_1w_2...w_{n}$, \\ $x = x_1x_2...x_{n}$ and $y = y_1y_2...y_n$. Then by theorem \ref{mostlyEqual}
+    $$x_i = w_i = y_i;\ i \in \{2, 3, ..., n\}$$
+
+Since this is a binary language, there are only two possible values for the first letter. Hence, it is impossible for $w_1$, $x_1$, and $y_1$ to all be unique. At least two of the letters must be the same.
+
+Therefore $w = x$ or $x = y$ or $y = w$. Therefore $A$ must have at most two keywords.
+\end{proof}
+
+\begin{lemma}\label{01first}
+    If a word list has two unique keywords $w$, and $x$ s.t. \\$w = w_1w_2...w_{n}$, $x = x_1x_2...x_{n}$, then the keywords are of the form \\$0w_2w_3...w_n$ and $1w_2w_3...w_n$. Hence the largest balanced subsets of $\{w0, w1, x0, x1 \}$ are $\{w0, w1, x0\}$ and $\{w1, x0, x1\}$ where $w = 0w_2w_3...w_n$ and $x = 1w_2w_3...w_n$.
+\end{lemma}
+\begin{proof}
+    Let $A$ be a word list with two unique keywords $w$, and $x$ s.t. $w = w_1w_2...w_{n}$, \\ $x = x_1x_2...x_{n}$. By theorem \ref{mostlyEqual} 
+    $$x_i = w_i = y_i;\ i \in \{2, 3, ..., n\}$$
+    Therefore, to maintain uniqueness, $w_1 \ne x_1$. Becuase this is a binary language, either $w_1 = 0, x_1 = 1$ or $w_1 = 1, x_1 = 0$.
+\end{proof}
+
+\begin{theorem}
+    If a word list has two keywords $0w$ and $1w$ then $w$ is a palindrome.
+\end{theorem}
+\begin{proof}
+    Let $0w$ and $1w$ be two keywords of a word list, $A$. Then by theorem \ref{mostlyEqual}, the following words are in $A$.
+    \begin{align*}
+        &0w \\
+        &1w \\
+        &w0 \\
+        &w1 \\
+    \end{align*}
+    Let's represent the characters of $w$ as $w = w_0w_1...w_n$. For sake of contradiction, assume that $w_1 \neq w_n$. Then either case of words would be in $A$
+    \begin{align*}
+        &00w_1...w_{n-1}1 &         &01w_1...w_{n-1}0 \\
+        &10w_1...w_{n-1}1 &         &11w_1...w_{n-1}1 \\
+        &0w_1...w_{n-1}10 &         &1w_1...w_{n-1}00 \\
+        &0w_1...w_{n-1}11 &         &1w_1...w_{n-1}01 
+    \end{align*}
+    In either case, there exist subwords $00$ and $11$ which would result in an unbalanced word list. Therefore $w_1 = w_n$.
+    Assume for some $k$ that $w_i = w_{n - i}; 0 \leq i \leq k$. For sake of contradiction, also assume that $w_{i + 1} \neq w_{n - i}$. Then either case of words would be in $A$.
+    \begin{align*}
+        &0w_0...w_i0...1w_{n-i}..w_{n} &    &0w_0...w_i1...0w_{n-i}..w_{n} \\
+        &1w_0...w_i0...1w_{n-i}..w_{n} &    &1w_0...w_i1...0w_{n-i}..w_{n} \\
+        &w_0...w_i0...1w_{n-i}..w_{n}0 &    &w_0...w_i1...0w_{n-i}..w_{n}0 \\
+        &w_0...w_i0...1w_{n-i}..w_{n}1 &    &w_0...w_i1...0w_{n-i}..w_{n}1 
+    \end{align*}
+    In the left case $0w_0...w_i0$ is out of balance with $1w_{n-i}..w_{n}1$. In the right case $1w_0...w_i1$ is out of balance with $0w_{n-i}..w_{n}0$. Hence, $w_{n-k-1} = w_{k+1}$. Therefore, through induction, $w = \bar w$.
+\end{proof}
+
+
+
+% Wait untl complexity is better proven
+\newpage
+\begin{lemma}
+Any word list can have at most two children, implicating the tree of word lists is binary.
+\end{lemma}
+\begin{proof}
+    Let $A$ be a word list of $n$ words, two of which are keywords, and $\forall a \in A$ the length of $a$ is $n-1$. Then $\Big | \bar C(A) \Big | =  n + 2$, with  $\forall a \in \bar C (A)$ the length of $a$ is $n$. Hence $\bar C (A)$ can only produce two unique lists with complexity $n + 1$.
+
+    If $A$ instead has only one keyword. Then $\Big | \bar C(A) \Big | = n + 1$. Hence $\bar C (A)$ can only produce one unique list of complexity $n + 1$.
+\end{proof}
+\end{document}
