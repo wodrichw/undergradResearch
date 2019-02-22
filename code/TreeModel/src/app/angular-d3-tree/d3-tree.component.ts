@@ -12,14 +12,7 @@ export class D3TreeComponent {
   @Output() onNodeChanged: EventEmitter<any> = new EventEmitter();
   @Output() onNodeSelected: EventEmitter<any> = new EventEmitter();
 
-  constructor( private treeService: D3TreeService ) {
-    treeService.setNodeChangedListener((node) => {
-      this.onNodeChanged.emit(node);
-    });
-    treeService.setNodeSelectedListener((node) => {
-      this.onNodeSelected.emit(node);
-    });
-  }
+  constructor( private treeService: D3TreeService ) { }
 
   ngOnChanges(changes: any) {
     console.log(`CHANGES:  ${changes.toString()}`);
