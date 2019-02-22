@@ -72,6 +72,10 @@ export class TreeModel {
     this.root.x0 = this.height / 2;
     this.root.y0 = 0;
 
+    this.root.descendants().forEach((d, i) => {
+      d.id = i;
+      d._children = d.children;
+    });
     this.root.children.map((d) => this.collapse(d));
   }
 
@@ -146,7 +150,7 @@ export class TreeModel {
         .attr('r', this.nodeRadius+2)
         .attr('opacity', 0.2) // change this to zero to hide the target area
         .style('fill', 'darkblue')
-        .attr('pointer-events', 'mouseover')
+        .attr('pointer-events', 'mouseover');
         
     const nodeUpdate = nodeEnter.merge(node);
 
