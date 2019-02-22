@@ -68,10 +68,7 @@ export class TreeModel {
   }
 
   createTreeData(treeData: any) {
-    this.root = d3.stratify<any>()
-          .id(function(d) { return d.id; })
-          .parentId(function(d) { return d.parent; })
-          (treeData);
+    this.root = d3.hierarchy(treeData);
     this.root.x0 = this.height / 2;
     this.root.y0 = 0;
 
@@ -242,7 +239,6 @@ export class TreeModel {
 
   // Creates a curved (diagonal) path from parent to the child nodes
   diagonalCurvedPath(s, d) {
-
     const path = `M ${s.y} ${s.x}
             C ${(s.y + d.y) / 2} ${s.x},
               ${(s.y + d.y) / 2} ${d.x},
