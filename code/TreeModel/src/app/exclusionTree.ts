@@ -1,46 +1,27 @@
-class Node {
-    public parent: Node;
-    public left: Node;
-    public right: Node;
-    public exclusion: string;
-    constructor(e: string, p: Node = null, l: Node = null, r: Node = null) {
-        this.exclusion = e;
-        this.left = l;
-        this.right = r;
-        this.parent = p;
-    }
-}
-
+export type Tree = {name: string, children: Tree[] };
 export class ExclusionTree {
-    public root: Node;
-    public d3Obj = [{ id: '1', description: '11' }];
-    constructor(depth: number) {
-        const bt = this.buildTree(new Node('11'), 0, depth, 1);
-        this.root = bt.node;
-        this.d3Obj = bt.d3Obj;
-    }
+    public root: Tree = {name: '11', children: [{name: '000', children: null}, {name: '101', children: null}]};
 
-    buildTree(n: Node, currentDepth, maxDepth, idx: number): {node: Node, d3Obj: any} {
-        if (currentDepth === maxDepth) {
-            return {node: null, d3Obj: []};
+    expandTree(d3Node) {
+        const exclusions = this.getExclusions(d3Node);
+        let n = this.root;
+        for (let e of exclusions.slice(1)) {
+            if (n.children[0].name === e) {
+                n = n.children[0];
+            } else if (n.children[1].name === e) {
+                n = n.children[1];
+            }
         }
-        const exclusions = this.getExclusions(n);
-        const children = this.findExclusionChildren(exclusions);
-        const btLeft = this.buildTree(new Node (children[0], n), currentDepth + 1, maxDepth, idx * 2);
-        const btRight = this.buildTree(new Node (children[1], n), currentDepth + 1, maxDepth, idx * 2 + 1);
-        n.left = btLeft.node;
-        n.right = btRight.node;
-        const d3Obj = {name: n.exclusion, children: [btLeft.d3Obj, btRight.d3Obj]};
-        return {node: n, d3Obj};
+        const cNames = this.findExclusionChildren(exclusions);
+        n.children = [{name: cNames[0], children: null}, {name: cNames[1], children: null}];
     }
 
-    // returns a list of all parent exclusions in order of smallest to largest
-    getExclusions(n: Node): string[] {
+    getExclusions(n): string[] {
         if (n == null) {
             return [];
         }
         const e = this.getExclusions(n.parent);
-        e.push(n.exclusion);
+        e.push(n.data.name);
         return e;
     }
     // Finds the next larges pair of palindrome
