@@ -1,9 +1,10 @@
-export type Tree = {name: string, children: Tree[] };
+export type Tree = { name: string, children: Tree[] };
 export class ExclusionTree {
     public root: Tree = {name: '11', children: [{name: '000', children: null}, {name: '101', children: null}]};
 
     expandTree(d3Node) {
         const exclusions = this.getExclusions(d3Node);
+        // find node to expand
         let n = this.root;
         for (let e of exclusions.slice(1)) {
             if (n.children[0].name === e) {
@@ -12,8 +13,17 @@ export class ExclusionTree {
                 n = n.children[1];
             }
         }
+        // get children of d3Node
         const cNames = this.findExclusionChildren(exclusions);
+        let len = n.name.length;
+        // place in filler nodes between exclusions
+        while (len < cNames[0].length - 1) {
+            n.children = [{name: '', children: null}];
+            n = n.children[0];
+            len++;
+        }
         n.children = [{name: cNames[0], children: null}, {name: cNames[1], children: null}];
+
     }
 
     getExclusions(n): string[] {
@@ -24,6 +34,7 @@ export class ExclusionTree {
         e.push(n.data.name);
         return e;
     }
+
     // Finds the next larges pair of palindrome
     // such that all palindrome in exclusions
     // are not subwords in either palindromes in the pair

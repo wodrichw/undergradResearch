@@ -11,7 +11,7 @@ import { Tree } from '../exclusionTree';
 export class D3TreeComponent {
   @ViewChild('chart') private chartContainer: ElementRef;
   @Input() private tree$: Observable<Tree>;
-  @Output() onNodeSelected: EventEmitter<any>= new EventEmitter();
+  @Output() onNodeSelected = new EventEmitter();
 
   treeModel: TreeModel = new TreeModel();
   treeData: Tree;
