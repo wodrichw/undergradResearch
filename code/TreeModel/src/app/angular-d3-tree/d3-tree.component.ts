@@ -21,20 +21,17 @@ export class D3TreeComponent {
   }
 
   ngOnChanges(changes: any) {
-    console.log('CHANGES:', changes);
-    if (!!this.tree$) {
-      this.tree$.subscribe(t => {
-        this.treeModel.createTreeData(t);
-        if (this.treeData == null) {
-          const element = this.chartContainer.nativeElement;
-          element.innerHTML = '';
-          this.treeModel.addSvgToContainer(this.chartContainer);
-          this.treeModel.createLayout();
-        }
-        this.treeModel.update(t);
-        this.treeData = t;
-      });
-    }
+    this.tree$.subscribe(t => {
+      this.treeModel.createTreeData(t);
+      if (this.treeData == null) {
+        const element = this.chartContainer.nativeElement;
+        element.innerHTML = '';
+        this.treeModel.addSvgToContainer(this.chartContainer);
+        this.treeModel.createLayout();
+      }
+      this.treeModel.update(t);
+      this.treeData = t;
+    });
   }
 
   setNodeSelectedListener(callable) {

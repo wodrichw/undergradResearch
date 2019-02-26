@@ -13,7 +13,8 @@ export class TreeModel {
   height: number;
   width: number;
   margin: any = { top: 200, bottom: 90, left: 100, right: 90};
-  nodeRadius: number = 5;
+  nodeRadius = 10;
+  columnFontScale = 1;
 
 
   selectedNodeByClick: any;
@@ -44,6 +45,8 @@ export class TreeModel {
     svg.call(zoom);
     function zoomed() {
       d3.select('g').attr('transform', d3.event.transform);
+      const columnFontScale = this.__zoom.k < 1 ? 1 / this.__zoom.k : 1;
+      d3.selectAll('text.column').style('font-size', 15 * columnFontScale);
     }
   }
 
@@ -68,6 +71,7 @@ export class TreeModel {
   }
 
   setColumns(treeData) {
+    const columnFontScale = 1 / d3.select('g').property('transform').baseVal[1].matrix.a;
     this.svg.selectAll('text.column').remove();
     const nodes = treeData.descendants();
     let depth = 0;
@@ -81,7 +85,8 @@ export class TreeModel {
                 .attr('class', 'column')
                 .attr('y', top - 30)
                 .attr('x', i * 180)
-                .text(String(i + 2));
+                .text(String(i + 2))
+                .style('font-size', 15 * columnFontScale);
     }
   }
 
@@ -163,13 +168,12 @@ export class TreeModel {
         .attr('x2', (d) => d.parent.y)
         .attr('y1', (d) => d.x)
         .attr('y2', (d) => d.parent.x)
-        .attr('stroke-width', 1)
-        .attr('stroke', 'grey');
+        .attr('stroke-width', 2)
+        .attr('stroke', 'lightgrey');
   }
 
   click(d, domNode) {
-    console.log(d, domNode)
-    if (this.previousClickedDomNode){
+    if (this.previousClickedDomNode) {
       this.previousClickedDomNode.classList.remove('selected');
     }
     if (d.children) {
