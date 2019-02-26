@@ -107,6 +107,7 @@ export class TreeModel {
 
     nodeEnter.append('text')
         .attr('dy', -5)
+        .attr('dx', -7)
         .attr('text-anchor', 'end')
         .text(d => d.data.name);
 
@@ -168,8 +169,8 @@ export class TreeModel {
         .attr('x2', (d) => d.parent.y)
         .attr('y1', (d) => d.x)
         .attr('y2', (d) => d.parent.x)
-        .attr('stroke-width', 2)
-        .attr('stroke', 'lightgrey');
+        .attr('stroke-width', 1)
+        .attr('stroke', 'grey');
   }
 
   click(d, domNode) {
