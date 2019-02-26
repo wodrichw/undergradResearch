@@ -23,7 +23,7 @@ export class AppComponent implements OnInit{
   }
 
   nodeSelected(d3node) {
-    if (d3node._children == null) {
+    if (d3node.data.children == null) {
       this.tree.expandTree(d3node);
       this.treeSubj.next(this.tree.root);
     }
