@@ -71,7 +71,8 @@ export class TreeModel {
   }
 
   setColumns(treeData) {
-    const columnFontScale = 1 / d3.select('g').property('transform').baseVal[1].matrix.a;
+    const zoom = d3.select('g').property('transform').baseVal[1].matrix.a;
+    const columnFontScale = zoom < 1 ? 1 / zoom : 1;
     this.svg.selectAll('text.column').remove();
     const nodes = treeData.descendants();
     let depth = 0;
