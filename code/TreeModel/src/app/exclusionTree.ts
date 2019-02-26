@@ -3,6 +3,7 @@ export class ExclusionTree {
     public root: Tree = {name: '11', children: [{name: '000', children: null}, {name: '101', children: null}]};
 
     expandTree(d3Node) {
+        if (d3Node.data.name === '') { return; }
         const exclusions = this.getExclusions(d3Node);
         // find node to expand
         let n = this.root;
