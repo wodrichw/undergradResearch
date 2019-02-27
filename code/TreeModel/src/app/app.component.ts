@@ -1,6 +1,8 @@
 import { Component, OnInit} from '@angular/core';
 import { ExclusionTree, Tree } from './exclusionTree';
 import { Subject, Observable } from 'rxjs';
+import {delay} from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-root',
@@ -12,20 +14,25 @@ export class AppComponent implements OnInit{
   title = 'TreeModel';
   treeSubj = new Subject<Tree>();
   tree$: Observable<Tree>;
+  iNodeSubj = new Subject<any>();
+  iNode$: Observable<any>;
 
   ngOnInit() {
     this.tree = new ExclusionTree();
     this.tree$ = this.treeSubj.asObservable();
+    this.iNode$ = this.iNodeSubj.asObservable();
 
     // Delayed so that tree.root is passed correctly to d3-component
-    const delay = () => this.treeSubj.next(this.tree.root);
-    setTimeout(delay, 0);
+    setTimeout(() => this.treeSubj.next(this.tree.root), 0);
   }
 
-  nodeSelected(d3node) {
+  expandNode(d3node) {
     if (d3node.data.children == null) {
       this.tree.expandTree(d3node);
       this.treeSubj.next(this.tree.root);
     }
+  }
+  inspectNode(d3Node) {
+    this.iNodeSubj.next(d3Node);
   }
 }

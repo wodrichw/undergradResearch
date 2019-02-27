@@ -1,10 +1,36 @@
-<div style="text-align:center">
-  <h1>
-    Model for the Assemblers
-  </h1>
-</div>
 
-<app-d3-tree
-  [(tree$)]="tree$"
-  (onNodeSelected)="nodeSelected($event)">
-</app-d3-tree>
+<div class="wrapper">
+  <div style="text-align:center">
+    <h1>
+      The Assemblers
+    </h1>
+    <h2>
+      Math Model
+    </h2>
+  </div>
+
+  <mat-card class="exclusionTreeCard">
+    <mat-card-title>
+      Exclusion Tree
+    </mat-card-title>
+    <mat-card-content>
+      <app-d3-tree
+        on-hold="hold()"
+        [(tree$)]="tree$"
+        (expandNode)="expandNode($event)"
+        (inspectNode)="inspectNode($event)">
+      </app-d3-tree>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-title>
+      Node Details
+    </mat-card-title>
+    <mat-card-content>
+      <app-word-list
+        [(d3node)]="iNode$"
+      ></app-word-list>
+    </mat-card-content>
+  </mat-card>
+</div>

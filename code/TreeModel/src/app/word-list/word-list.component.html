@@ -1,0 +1,24 @@
+<div *ngIf="exclusions.length > 0">
+  <h3>
+    Exclusions
+  </h3>
+  <ul>
+    <li *ngFor="let e of exclusions" class="row">
+      <div *ngFor="let c of e.split('')" [ngClass]="['fill' + c, 'square']">
+        {{c}}
+      </div>
+    </li>
+  </ul>
+</div>
+<div *ngIf="wordList.length > 0">
+  <h3>
+    Word List
+  </h3>
+  <ul >
+    <li *ngFor="let word of wordList" class="row">
+      <div *ngFor="let c of word.split('')" [ngClass]="['fill' + c, 'square']">
+        {{c}}
+      </div>
+    </li>
+  </ul>
+</div>

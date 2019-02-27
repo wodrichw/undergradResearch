@@ -13,6 +13,7 @@ export class ExclusionTree {
                 n = n.children[1];
             }
         }
+
         // get children of d3Node
         const cNames = this.findExclusionChildren(exclusions);
         let len = n.name.length;
