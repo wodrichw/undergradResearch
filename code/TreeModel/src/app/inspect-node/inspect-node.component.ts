@@ -1,14 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ExclusionTree, Tree } from '../exclusionTree';
 import { TreeService } from '../tree.service';
 
 @Component({
-  selector: 'app-word-list',
-  templateUrl: './word-list.component.html',
-  styleUrls: ['./word-list.component.css']
+  selector: 'app-inspect-node',
+  templateUrl: './inspect-node.component.html',
+  styleUrls: ['./inspect-node.component.css']
 })
-export class WordListComponent implements OnInit {
+export class InspectNodeComponent implements OnInit {
   @Input() d3node: Observable<any>;
   exclusions: any[] = [];
   wordList: string[] = [];
