@@ -15,7 +15,7 @@
 \section{Keywords}
 
 \begin{theorem}\label{mostlyEqual}
-    Any two unique keywords $w$ and $x$ s.t. $w = w_1w_2...w_{n}$, \\ $x = x_1x_2...x_{n}$ in a binary word list must be of the form $w_i = x_i;\ i \in \{2,3,...,n\}$.
+    Any two distinct keywords $w$ and $x$ s.t. $w = 0w_2...w_{n}$, \\ $x = 1x_2...x_{n}$ in a binary word list must be of the form $w_i = x_i;\ i \in \{2,3,...,n\}$.
 \end{theorem}
 \begin{proof}
 Let $A$ be a word list with distinct keywords $w$, $x$, s.t. $w = w_1w_2...w_{n}$, and $x = x_1x_2...x_{n}$ where $w_i,x_i,y_i \in \{0, 1\}$. 
@@ -35,8 +35,9 @@ Note that if $w_{n} \neq x_{n}$ then we get either case
     &x_2x_3...x_{n-1}10 &or \hspace{2cm}& x_2x_3...x_{n-1}00  \\
     &x_2x_3...x_{n-1}11 &               & x_2x_3...x_{n-1}01 
 \end{align*}
-In either case, $w$ and $x$ would violate the definition of balanced because \\ $|11|-|00| = 2 > 1$. Therefore $w_{n} = x_{n}$.
+In either case, $w$ and $x$ would violate the definition of balanced because \\ $|11|-|00| = 2 > 1$. Therefore $w_{n} = x_{n}$. \\
 
+The following inductively shows $w_i = x_i;\ i \in \{2, 3, ..., n\}$. \\
 Assume that 
 \begin{align*}
     & w_{n} = x_{n} \\
@@ -53,29 +54,30 @@ For convenience, let $e_i = w_{n-i};\ i \in \{2,...,k\}$. Note that if $w_{n-k-1
     &x_2x_3...x_{n-k-2}1e_i1 &               & x_2x_3...x_{n-k-2}0e_i1 
 \end{align*}
 In either case, $w$ and $x$ would violate the definition of balanced because \\ $|1e_i1| - |0e_i0| = 2 > 1$. Therefore $w_{n-k} = x_{n-k}$, and by induction 
-$$w_i = x_i;\ i \in \{2,3,...,n\}$$.
+$$w_i = x_i;\ i \in \{2,3,...,n\}$$
 \end{proof}
 
 \begin{lemma}
-    Any  word list has at most two keyword
+    Any  word list has at most two keywords
 \end{lemma}
 \begin{proof}
     Let $A$ be a word list of keywords  $w$, $x$ and $y$ s.t. $w = w_1w_2...w_{n}$, \\ $x = x_1x_2...x_{n}$ and $y = y_1y_2...y_n$. Then by theorem \ref{mostlyEqual}
     $$x_i = w_i = y_i;\ i \in \{2, 3, ..., n\}$$
 
-Since this is a binary language, there are only two possible values for the first letter. Hence, it is impossible for $w_1$, $x_1$, and $y_1$ to all be unique. At least two of the letters must be the same.
+Since this is a binary language, there are only two possible values for the first letter. Hence, it is impossible for $w_1$, $x_1$, and $y_1$ to all be distinct. At least two of the letters must be the same.
 
 Therefore $w = x$ or $x = y$ or $y = w$. Therefore $A$ must have at most two keywords.
 \end{proof}
 
 \begin{lemma}\label{01first}
-    If a word list has two unique keywords $w$, and $x$ s.t. \\$w = w_1w_2...w_{n}$, $x = x_1x_2...x_{n}$, then the keywords are of the form \\$0w_2w_3...w_n$ and $1w_2w_3...w_n$. Hence the largest balanced subsets of $\{w0, w1, x0, x1 \}$ are $\{w0, w1, x0\}$ and $\{w1, x0, x1\}$ where $w = 0w_2w_3...w_n$ and $x = 1w_2w_3...w_n$.
+    Given two distinct keywords $x$ and $w$ of  a word list $A$, the largest balanced subsets of $\{w0, w1, x0, x1 \}$ are $\{w0, w1, x0\}$ and $\{w1, x0, x1\}$ where $w = 0w_2w_3...w_n$ and $x = 1w_2w_3...w_n$.
 \end{lemma}
 \begin{proof}
-    Let $A$ be a word list with two unique keywords $w$, and $x$ s.t. $w = w_1w_2...w_{n}$, \\ $x = x_1x_2...x_{n}$. By theorem \ref{mostlyEqual} 
+    Let $A$ be a word list with two distinct keywords $w$, and $x$ s.t. $w = w_1w_2...w_{n}$, \\ $x = x_1x_2...x_{n}$. By theorem \ref{mostlyEqual} 
     $$x_i = w_i = y_i;\ i \in \{2, 3, ..., n\}$$
-    Therefore, to maintain uniqueness, $w_1 \ne x_1$. Becuase this is a binary language, either $w_1 = 0, x_1 = 1$ or $w_1 = 1, x_1 = 0$.
+    Therefore, to maintain distinctness, $w_1 \ne x_1$. Becuase this is a binary language, either $w_1 = 0, x_1 = 1$ or $w_1 = 1, x_1 = 0$.
 \end{proof}
+This result will be used later to show that whenever there are two keywords, that $C(A)$ will produce a set that can be split into two distinct word lists.
 
 \begin{theorem}
     If a word list has two keywords $0w$ and $1w$ then $w$ is a palindrome.
@@ -88,13 +90,23 @@ Therefore $w = x$ or $x = y$ or $y = w$. Therefore $A$ must have at most two key
         &w0 \\
         &w1 \\
     \end{align*}
-    Let's represent the characters of $w$ as $w = w_0w_1...w_n$. For sake of contradiction, assume that $w_1 \neq w_n$. Then either case of words would be in $A$
+    Let's represent the characters of $w$ as $w = w_1...w_n$. For sake of contradiction, assume that $w_1 \neq w_n$. \\
+    When $w_1 \neq w_n$ then either $w_1 = 0,\ w_n = 1$ or $w_1 = 1,\ w_n = 0$.\\
+    If $w_1 = 0, w_n = 1$ then the following words are in $A$:
     \begin{align*}
-        &00w_1...w_{n-1}1 &         &01w_1...w_{n-1}0 \\
-        &10w_1...w_{n-1}1 &         &11w_1...w_{n-1}1 \\
-        &0w_1...w_{n-1}10 &         &1w_1...w_{n-1}00 \\
-        &0w_1...w_{n-1}11 &         &1w_1...w_{n-1}01 
+        00w_2...w_{n-1}1 \\
+        10w_2...w_{n-1}1 \\
+        0w_1...w_{n-2}10 \\
+        0w_1...w_{n-2}11  
     \end{align*}
+    Otherwise, it would be the case that $w_1 = 1, w_n = 0$, meaning that the following words are in $A$:
+    \begin{align*}
+        01w_2...w_{n-1}0 \\  
+        11w_2...w_{n-1}1 \\ 
+        1w_1...w_{n-2}00 \\
+        1w_1...w_{n-2}01
+    \end{align*}
+
     In either case, there exist subwords $00$ and $11$ which would result in an unbalanced word list. Therefore $w_1 = w_n$.
     Assume for some $k$ that $w_i = w_{n - i}; 0 \leq i \leq k$. For sake of contradiction, also assume that $w_{i + 1} \neq w_{n - i}$. Then either case of words would be in $A$.
     \begin{align*}
@@ -114,8 +126,8 @@ Therefore $w = x$ or $x = y$ or $y = w$. Therefore $A$ must have at most two key
 Any word list can have at most two children, implicating the tree of word lists is binary.
 \end{lemma}
 \begin{proof}
-    Let $A$ be a word list of $n$ words, two of which are keywords, and $\forall a \in A$ the length of $a$ is $n-1$. Then $\Big | \bar C(A) \Big | =  n + 2$, with  $\forall a \in \bar C (A)$ the length of $a$ is $n$. Hence $\bar C (A)$ can only produce two unique lists with complexity $n + 1$.
+    Let $A$ be a word list of $n$ words, two of which are keywords, and $\forall a \in A$ the length of $a$ is $n-1$. Then $\Big | \bar C(A) \Big | =  n + 2$, with  $\forall a \in \bar C (A)$ the length of $a$ is $n$. Hence $\bar C (A)$ can only produce two distinct lists with complexity $n + 1$.
 
-    If $A$ instead has only one keyword. Then $\Big | \bar C(A) \Big | = n + 1$. Hence $\bar C (A)$ can only produce one unique list of complexity $n + 1$.
+    If $A$ instead has only one keyword. Then $\Big | \bar C(A) \Big | = n + 1$. Hence $\bar C (A)$ can only produce one distinct list of complexity $n + 1$.
 \end{proof}
 \end{document}
