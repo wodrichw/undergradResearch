@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { D3TreeComponent } from './d3-tree/d3-tree.component';
 import { WordListComponent } from './word-list/word-list.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TreeService } from './tree.service';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatExpansionModule,
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [ TreeService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

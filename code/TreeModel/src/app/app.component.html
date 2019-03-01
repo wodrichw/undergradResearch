@@ -14,12 +14,7 @@
       Exclusion Tree
     </mat-card-title>
     <mat-card-content>
-      <app-d3-tree
-        on-hold="hold()"
-        [(tree$)]="tree$"
-        (expandNode)="expandNode($event)"
-        (inspectNode)="inspectNode($event)">
-      </app-d3-tree>
+      <app-d3-tree></app-d3-tree>
     </mat-card-content>
   </mat-card>
 
@@ -28,9 +23,7 @@
       Node Details
     </mat-card-title>
     <mat-card-content>
-      <app-word-list
-        [(d3node)]="iNode$"
-      ></app-word-list>
+      <app-word-list></app-word-list>
     </mat-card-content>
   </mat-card>
 </div>

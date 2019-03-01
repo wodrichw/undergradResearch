@@ -1,14 +1,15 @@
-import { Component, ViewChild, ElementRef, Input, Output, EventEmitter} from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, Output, EventEmitter, OnInit} from '@angular/core';
 import { TreeModel } from './tree.model';
 import { Observable } from 'rxjs';
 import { Tree } from '../exclusionTree';
+import { TreeService } from '../tree.service';
 
 @Component({
   selector: 'app-d3-tree',
   template: `<div class="d3-chart" #chart></div>`,
   styleUrls: ['./d3-tree.component.css']
 })
-export class D3TreeComponent {
+export class D3TreeComponent implements OnInit{
   @ViewChild('chart') private chartContainer: ElementRef;
   @Input() private tree$: Observable<Tree>;
   @Output() expandNode = new EventEmitter();
@@ -17,13 +18,13 @@ export class D3TreeComponent {
   treeModel: TreeModel = new TreeModel();
   treeData: Tree;
 
-  constructor() {
-    this.expandTreeListener(d => this.expandNode.emit(d));
-    this.inspectNodeListener(d => this.inspectNode.emit(d));
+  constructor(private ts: TreeService) {
+    this.expandTreeListener(d => this.ts.expandNode(d));
+    this.inspectNodeListener(d => this.ts.inspectNode(d));
   }
 
-  ngOnChanges() {
-    this.tree$.subscribe(t => {
+  ngOnInit() {
+    this.ts.getTree$().subscribe(t => {
       this.treeModel.createTreeData(t);
       if (this.treeData == null) {
         const element = this.chartContainer.nativeElement;

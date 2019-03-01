@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ExclusionTree, Tree } from '../exclusionTree';
+import { TreeService } from '../tree.service';
 
 @Component({
   selector: 'app-word-list',
@@ -9,14 +10,15 @@ import { ExclusionTree, Tree } from '../exclusionTree';
 })
 export class WordListComponent implements OnInit {
   @Input() d3node: Observable<any>;
-  et = new ExclusionTree();
   exclusions: any[] = [];
   wordList: string[] = [];
   wordLen: number;
 
+  constructor(private ts: TreeService) {}
+
   ngOnInit() {
-    this.d3node.subscribe(n => {
-      this.exclusions = this.et.getExclusions(n);
+    this.ts.getNode$().subscribe(n => {
+      this.exclusions = this.ts.exTree.getExclusions(n);
       this.wordLen = n.depth + 2;
       this.wordList = [];
       this.makeWordList();
