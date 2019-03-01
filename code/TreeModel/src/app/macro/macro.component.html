@@ -1,0 +1,40 @@
+<div>
+  <h3>
+    Node Traversal Macro
+  </h3>
+  <div>
+    <div *ngIf="macro.length" class="execute">
+      Execute: 
+      <button mat-raised-button color="accent" class="macro-cmd" >
+        BACK
+      </button>
+      <button mat-raised-button color="accent" class="macro-cmd" >
+        NEXT
+      </button>
+    </div>
+    <div *ngIf="macro.length" class="macro-disp row">
+      My Macro:
+      <div *ngFor="let m of macro.split('')" [ngClass]="['macro-'+m, 'circle']">
+        {{m}}
+      </div>
+    </div>
+    <div>
+      <button mat-mini-fab class="macro-P btn-circ" (click)="macroStringAdd('P')">
+        P
+      </button>
+      <button mat-mini-fab class="macro-L btn-circ" (click)="macroStringAdd('L')">
+        L
+      </button>
+      <button mat-mini-fab class="macro-l btn-circ" (click)="macroStringAdd('l')">
+        l
+      </button>
+      <button mat-mini-fab class="macro-R btn-circ" (click)="macroStringAdd('R')">
+        R
+      </button>
+      <button mat-mini-fab class="macro-r btn-circ" (click)="macroStringAdd('r')">
+        r
+      </button>
+      <button mat-mini-fab class="btn-circ" (click)="macroStringBack()"><mat-icon svgIcon="back"></mat-icon></button>
+    </div>
+  </div>
+</div>

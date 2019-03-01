@@ -10,7 +10,6 @@ ul {
 .row {
     display: flex;
     flex-direction: row
-
 }
 .square {
     width: 20px;

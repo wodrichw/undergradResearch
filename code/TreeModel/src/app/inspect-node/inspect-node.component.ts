@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, OnInit} from '@angular/core';
 import { TreeService } from '../tree.service';
+
 
 @Component({
   selector: 'app-inspect-node',
@@ -8,12 +8,11 @@ import { TreeService } from '../tree.service';
   styleUrls: ['./inspect-node.component.css']
 })
 export class InspectNodeComponent implements OnInit {
-  @Input() d3node: Observable<any>;
   exclusions: any[] = [];
   wordList: string[] = [];
   wordLen: number;
 
-  constructor(private ts: TreeService) {}
+  constructor(private ts: TreeService) { }
 
   ngOnInit() {
     this.ts.getNode$().subscribe(n => {
