@@ -18,6 +18,8 @@ export class TreeModel {
   columnWidth = 80;
   columnFontScale = 1;
 
+  iNode: any; // The inspected node
+
   mouseDown$ = new Subject<boolean>();
   nodeInspected: InspectNode;
 
@@ -40,8 +42,7 @@ export class TreeModel {
 
   setZoomBehaviour() {
     const zoom = d3.zoom()
-      // .translateExtent([[-500, -1000], [200000, 10000]])
-      .on('zoom', zoomed );
+      .on('zoom', zoomed);
     const svg = d3.select('svg');
 
     const t = d3.zoomIdentity.translate(this.margin.left, this.margin.top);
@@ -77,8 +78,6 @@ export class TreeModel {
   }
 
   setColumns(treeData) {
-    const zoom = d3.select('g').property('transform').baseVal[1].matrix.a;
-    const columnFontScale = zoom < 1 ? 1 / zoom : 1;
     this.svg.selectAll('text.column').remove();
     const nodes = treeData.descendants();
     let depth = 0;
@@ -93,7 +92,7 @@ export class TreeModel {
                 .attr('y', top - 30)
                 .attr('x', i * this.columnWidth)
                 .text(String(i + 2))
-                .style('font-size', 15 * columnFontScale);
+                .style('font-size', 15 * this.columnFontScale);
     }
   }
 
@@ -141,16 +140,8 @@ export class TreeModel {
         .pipe(takeUntil(this.mouseDown$), delay(80))
         .subscribe(t => {
           if (t === 10) {
-            // Callback node inspected
-            this.inspectNode(d);
-
-            d3.selectAll('circle')
-              .style('fill', '#4c516d');
-            d3.select('circle.circle' + d.data.id)
-              .style('fill', '#d9534f')
-              .attr('r', this.nodeRadius);
-            this.nodeInspected = {mouseDown: true, id: d.data.id};
-            this.mouseDown$.next(false);
+            this.iNode = d;
+            this.setInspectedNode();
           } else {
             d3.selectAll('circle.circle' + d.data.id)
               .attr('r', this.nodeRadius + t * 2);
@@ -175,7 +166,7 @@ export class TreeModel {
         d.children = d._children;
         d._children = null;
       } else {
-        this.expandTree(d);
+        this.expandTreeEvent(d);
       }
       treeModel.update();
       d3.selectAll('circle')
@@ -202,11 +193,25 @@ export class TreeModel {
         .attr('stroke', 'grey');
   }
 
-  click(d) {
+  setInspectedNode(path?: string) {
+    // initialize inspected node to root
+    if (this.iNode == null) {
+      this.iNode = this.treeData.descendants()[0];
+    }
+    // Callback node inspected
+    this.inspectNodeEvent(this.iNode);
+
+    d3.selectAll('circle')
+      .style('fill', '#4c516d');
+    d3.select('circle.circle' + this.iNode.data.id)
+      .style('fill', '#d9534f')
+      .attr('r', this.nodeRadius);
+    this.nodeInspected = {mouseDown: true, id: this.iNode.data.id};
+    this.mouseDown$.next(false);
   }
 
   // events
-  expandTree(node) {}
-  inspectNode(node) {}
+  expandTreeEvent(node) {}
+  inspectNodeEvent(node) {}
 
 }

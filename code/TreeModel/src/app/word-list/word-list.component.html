@@ -1,4 +1,4 @@
-<div *ngIf="exclusions.length > 0">
+<div *ngIf="exclusions.length > 0" class="container">
   <h3>
     Exclusions
   </h3>
@@ -14,7 +14,7 @@
   <h3>
     Word List
   </h3>
-  <ul >
+  <ul class="container">
     <li *ngFor="let word of wordList" class="row">
       <div *ngFor="let c of word.split('')" [ngClass]="['fill' + c, 'square']">
         {{c}}

@@ -202,16 +202,18 @@ var D3TreeComponent = /** @class */ (function () {
                 element.innerHTML = '';
                 _this.treeModel.addSvgToContainer(_this.chartContainer);
                 _this.treeModel.createLayout();
+                _this.treeModel.update();
             }
             _this.treeModel.update();
+            _this.treeModel.setInspectedNode();
             _this.treeData = t;
         });
     };
     D3TreeComponent.prototype.expandTreeListener = function (callable) {
-        this.treeModel.expandTree = callable;
+        this.treeModel.expandTreeEvent = callable;
     };
     D3TreeComponent.prototype.inspectNodeListener = function (callable) {
-        this.treeModel.inspectNode = callable;
+        this.treeModel.inspectNodeEvent = callable;
     };
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('chart'),
@@ -282,7 +284,6 @@ var TreeModel = /** @class */ (function () {
     };
     TreeModel.prototype.setZoomBehaviour = function () {
         var zoom = d3__WEBPACK_IMPORTED_MODULE_0__["zoom"]()
-            // .translateExtent([[-500, -1000], [200000, 10000]])
             .on('zoom', zoomed);
         var svg = d3__WEBPACK_IMPORTED_MODULE_0__["select"]('svg');
         var t = d3__WEBPACK_IMPORTED_MODULE_0__["zoomIdentity"].translate(this.margin.left, this.margin.top);
@@ -314,8 +315,6 @@ var TreeModel = /** @class */ (function () {
         this.setNodes(this.treeData);
     };
     TreeModel.prototype.setColumns = function (treeData) {
-        var zoom = d3__WEBPACK_IMPORTED_MODULE_0__["select"]('g').property('transform').baseVal[1].matrix.a;
-        var columnFontScale = zoom < 1 ? 1 / zoom : 1;
         this.svg.selectAll('text.column').remove();
         var nodes = treeData.descendants();
         var depth = 0;
@@ -330,7 +329,7 @@ var TreeModel = /** @class */ (function () {
                 .attr('y', top - 30)
                 .attr('x', i * this.columnWidth)
                 .text(String(i + 2))
-                .style('font-size', 15 * columnFontScale);
+                .style('font-size', 15 * this.columnFontScale);
         }
     };
     TreeModel.prototype.setNodes = function (treeData) {
@@ -369,15 +368,8 @@ var TreeModel = /** @class */ (function () {
                 .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(_this.mouseDown$), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["delay"])(80))
                 .subscribe(function (t) {
                 if (t === 10) {
-                    // Callback node inspected
-                    _this.inspectNode(d);
-                    d3__WEBPACK_IMPORTED_MODULE_0__["selectAll"]('circle')
-                        .style('fill', '#4c516d');
-                    d3__WEBPACK_IMPORTED_MODULE_0__["select"]('circle.circle' + d.data.id)
-                        .style('fill', '#d9534f')
-                        .attr('r', _this.nodeRadius);
-                    _this.nodeInspected = { mouseDown: true, id: d.data.id };
-                    _this.mouseDown$.next(false);
+                    _this.iNode = d;
+                    _this.setInspectedNode();
                 }
                 else {
                     d3__WEBPACK_IMPORTED_MODULE_0__["selectAll"]('circle.circle' + d.data.id)
@@ -405,7 +397,7 @@ var TreeModel = /** @class */ (function () {
                 d._children = null;
             }
             else {
-                _this.expandTree(d);
+                _this.expandTreeEvent(d);
             }
             treeModel.update();
             d3__WEBPACK_IMPORTED_MODULE_0__["selectAll"]('circle')
@@ -430,11 +422,24 @@ var TreeModel = /** @class */ (function () {
             .attr('stroke-width', 1)
             .attr('stroke', 'grey');
     };
-    TreeModel.prototype.click = function (d) {
+    TreeModel.prototype.setInspectedNode = function (path) {
+        // initialize inspected node to root
+        if (this.iNode == null) {
+            this.iNode = this.treeData.descendants()[0];
+        }
+        // Callback node inspected
+        this.inspectNodeEvent(this.iNode);
+        d3__WEBPACK_IMPORTED_MODULE_0__["selectAll"]('circle')
+            .style('fill', '#4c516d');
+        d3__WEBPACK_IMPORTED_MODULE_0__["select"]('circle.circle' + this.iNode.data.id)
+            .style('fill', '#d9534f')
+            .attr('r', this.nodeRadius);
+        this.nodeInspected = { mouseDown: true, id: this.iNode.data.id };
+        this.mouseDown$.next(false);
     };
     // events
-    TreeModel.prototype.expandTree = function (node) { };
-    TreeModel.prototype.inspectNode = function (node) { };
+    TreeModel.prototype.expandTreeEvent = function (node) { };
+    TreeModel.prototype.inspectNodeEvent = function (node) { };
     return TreeModel;
 }());
 
@@ -548,7 +553,7 @@ var ExclusionTree = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "ul {\n    padding: 0;\n    list-style-type: none;\n}\n.row {\n    display: flex;\n    flex-direction: row\n}\n.square {\n    width: 20px;\n    height: 20px;\n    border: 1px solid black;\n    margin: 1px 1px 1px 1px;\n    text-align: center\n}\n.fill0 {\n    color: black;\n    background-color: white;\n}\n.fill1 {\n    color: white;\n    background-color: black\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvd29yZC1saXN0L3dvcmQtbGlzdC5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0lBQ0ksVUFBVTtJQUNWLHFCQUFxQjtBQUN6QjtBQUNBO0lBQ0ksYUFBYTtJQUNiO0FBQ0o7QUFDQTtJQUNJLFdBQVc7SUFDWCxZQUFZO0lBQ1osdUJBQXVCO0lBQ3ZCLHVCQUF1QjtJQUN2QjtBQUNKO0FBQ0E7SUFDSSxZQUFZO0lBQ1osdUJBQXVCO0FBQzNCO0FBQ0E7SUFDSSxZQUFZO0lBQ1o7QUFDSiIsImZpbGUiOiJzcmMvYXBwL3dvcmQtbGlzdC93b3JkLWxpc3QuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbInVsIHtcbiAgICBwYWRkaW5nOiAwO1xuICAgIGxpc3Qtc3R5bGUtdHlwZTogbm9uZTtcbn1cbi5yb3cge1xuICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgZmxleC1kaXJlY3Rpb246IHJvd1xufVxuLnNxdWFyZSB7XG4gICAgd2lkdGg6IDIwcHg7XG4gICAgaGVpZ2h0OiAyMHB4O1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIGJsYWNrO1xuICAgIG1hcmdpbjogMXB4IDFweCAxcHggMXB4O1xuICAgIHRleHQtYWxpZ246IGNlbnRlclxufVxuLmZpbGwwIHtcbiAgICBjb2xvcjogYmxhY2s7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogd2hpdGU7XG59XG4uZmlsbDEge1xuICAgIGNvbG9yOiB3aGl0ZTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBibGFja1xufSJdfQ== */"
+module.exports = ".container {\n    max-height: 80vh;\n    overflow: auto;\n}\n\nul {\n    padding: 0;\n    list-style-type: none;\n}\n\n.row {\n    display: flex;\n    flex-direction: row\n\n}\n\n.square {\n    width: 20px;\n    height: 20px;\n    border: 1px solid black;\n    margin: 1px 1px 1px 1px;\n    text-align: center\n}\n\n.fill0 {\n    color: black;\n    background-color: white;\n}\n\n.fill1 {\n    color: white;\n    background-color: black\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvd29yZC1saXN0L3dvcmQtbGlzdC5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0lBQ0ksZ0JBQWdCO0lBQ2hCLGNBQWM7QUFDbEI7O0FBRUE7SUFDSSxVQUFVO0lBQ1YscUJBQXFCO0FBQ3pCOztBQUNBO0lBQ0ksYUFBYTtJQUNiOztBQUVKOztBQUNBO0lBQ0ksV0FBVztJQUNYLFlBQVk7SUFDWix1QkFBdUI7SUFDdkIsdUJBQXVCO0lBQ3ZCO0FBQ0o7O0FBQ0E7SUFDSSxZQUFZO0lBQ1osdUJBQXVCO0FBQzNCOztBQUNBO0lBQ0ksWUFBWTtJQUNaO0FBQ0oiLCJmaWxlIjoic3JjL2FwcC93b3JkLWxpc3Qvd29yZC1saXN0LmNvbXBvbmVudC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyIuY29udGFpbmVyIHtcbiAgICBtYXgtaGVpZ2h0OiA4MHZoO1xuICAgIG92ZXJmbG93OiBhdXRvO1xufVxuXG51bCB7XG4gICAgcGFkZGluZzogMDtcbiAgICBsaXN0LXN0eWxlLXR5cGU6IG5vbmU7XG59XG4ucm93IHtcbiAgICBkaXNwbGF5OiBmbGV4O1xuICAgIGZsZXgtZGlyZWN0aW9uOiByb3dcblxufVxuLnNxdWFyZSB7XG4gICAgd2lkdGg6IDIwcHg7XG4gICAgaGVpZ2h0OiAyMHB4O1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIGJsYWNrO1xuICAgIG1hcmdpbjogMXB4IDFweCAxcHggMXB4O1xuICAgIHRleHQtYWxpZ246IGNlbnRlclxufVxuLmZpbGwwIHtcbiAgICBjb2xvcjogYmxhY2s7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogd2hpdGU7XG59XG4uZmlsbDEge1xuICAgIGNvbG9yOiB3aGl0ZTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBibGFja1xufSJdfQ== */"
 
 /***/ }),
 
@@ -559,7 +564,7 @@ module.exports = "ul {\n    padding: 0;\n    list-style-type: none;\n}\n.row {\n
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"exclusions.length > 0\">\n  <h3>\n    Exclusions\n  </h3>\n  <ul>\n    <li *ngFor=\"let e of exclusions\" class=\"row\">\n      <div *ngFor=\"let c of e.split('')\" [ngClass]=\"['fill' + c, 'square']\">\n        {{c}}\n      </div>\n    </li>\n  </ul>\n</div>\n<div *ngIf=\"wordList.length > 0\">\n  <h3>\n    Word List\n  </h3>\n  <ul >\n    <li *ngFor=\"let word of wordList\" class=\"row\">\n      <div *ngFor=\"let c of word.split('')\" [ngClass]=\"['fill' + c, 'square']\">\n        {{c}}\n      </div>\n    </li>\n  </ul>\n</div>"
+module.exports = "<div *ngIf=\"exclusions.length > 0\" class=\"container\">\n  <h3>\n    Exclusions\n  </h3>\n  <ul>\n    <li *ngFor=\"let e of exclusions\" class=\"row\">\n      <div *ngFor=\"let c of e.split('')\" [ngClass]=\"['fill' + c, 'square']\">\n        {{c}}\n      </div>\n    </li>\n  </ul>\n</div>\n<div *ngIf=\"wordList.length > 0\">\n  <h3>\n    Word List\n  </h3>\n  <ul class=\"container\">\n    <li *ngFor=\"let word of wordList\" class=\"row\">\n      <div *ngFor=\"let c of word.split('')\" [ngClass]=\"['fill' + c, 'square']\">\n        {{c}}\n      </div>\n    </li>\n  </ul>\n</div>"
 
 /***/ }),
 
@@ -590,7 +595,6 @@ var WordListComponent = /** @class */ (function () {
     WordListComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.d3node.subscribe(function (n) {
-            console.log(n);
             _this.exclusions = _this.et.getExclusions(n);
             _this.wordLen = n.depth + 2;
             _this.wordList = [];

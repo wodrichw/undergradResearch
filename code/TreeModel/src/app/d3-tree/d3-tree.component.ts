@@ -30,16 +30,18 @@ export class D3TreeComponent {
         element.innerHTML = '';
         this.treeModel.addSvgToContainer(this.chartContainer);
         this.treeModel.createLayout();
+        this.treeModel.update();
       }
       this.treeModel.update();
+      this.treeModel.setInspectedNode();
       this.treeData = t;
     });
   }
 
   expandTreeListener(callable) {
-    this.treeModel.expandTree = callable;
+    this.treeModel.expandTreeEvent = callable;
   }
   inspectNodeListener(callable) {
-    this.treeModel.inspectNode = callable;
+    this.treeModel.inspectNodeEvent = callable;
   }
 }

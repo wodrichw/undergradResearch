@@ -16,7 +16,6 @@ export class WordListComponent implements OnInit {
 
   ngOnInit() {
     this.d3node.subscribe(n => {
-      console.log(n);
       this.exclusions = this.et.getExclusions(n);
       this.wordLen = n.depth + 2;
       this.wordList = [];
