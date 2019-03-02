@@ -3,16 +3,26 @@
     Node Traversal Macro
   </h3>
   <div>
-    <div *ngIf="macro.length" class="execute">
+    <div class="execute">
       Execute: 
-      <button mat-raised-button color="accent" class="macro-cmd" >
-        <mat-icon svgIcon="back"></mat-icon> BACK
-      </button>
-      <button mat-raised-button color="accent" class="macro-cmd" >
-        NEXT <mat-icon svgIcon="next"></mat-icon> 
-      </button>
+      <ng-container *ngIf="macro.length">
+        <button mat-raised-button color="accent" class="macro-cmd" >
+          <mat-icon svgIcon="back"></mat-icon> BACK
+        </button>
+        <button mat-raised-button color="accent" class="macro-cmd" >
+          NEXT <mat-icon svgIcon="next"></mat-icon> 
+        </button>
+      </ng-container>
+      <ng-container *ngIf="!macro.length">
+        <button mat-raised-button disabled color="accent" class="macro-cmd" >
+          <mat-icon svgIcon="back"></mat-icon> BACK
+        </button>
+        <button mat-raised-button disabled color="accent" class="macro-cmd" >
+          NEXT <mat-icon svgIcon="next"></mat-icon> 
+        </button>
+      </ng-container>
     </div>
-    <div *ngIf="macro.length" class="macro-disp row">
+    <div class="macro-disp row">
       My Macro:
       <div *ngFor="let m of macro.split('')" [ngClass]="['macro-'+m, 'circle']">
         {{m}}
@@ -29,7 +39,7 @@
         <button mat-mini-fab class="macro-R btn-circ" (click)="macroStringAdd('R')">
           R
         </button>
-        <ng-container *ngIf="macro.length > 0">
+        <ng-container *ngIf="macro.length">
           <button mat-mini-fab disabled class="macro-l btn-circ" (click)="macroStringAdd('l')">
             l
           </button>
@@ -37,7 +47,7 @@
             r
           </button>
         </ng-container>
-        <ng-container *ngIf="macro.length == 0">
+        <ng-container *ngIf="!macro.length">
           <button mat-mini-fab class="macro-l btn-circ" (click)="macroStringAdd('l')">
             l
           </button>
