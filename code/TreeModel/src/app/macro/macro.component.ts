@@ -26,4 +26,7 @@ export class MacroComponent {
   macroStringBack() {
     this.macro = this.macro.slice(0, this.macro.length - 1);
   }
+  smallMacro() {
+    return this.macro === 'l' || this.macro === 'r';
+  }
 }
