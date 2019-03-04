@@ -6,10 +6,10 @@
     <div class="execute">
       Execute: 
       <ng-container *ngIf="macro.length">
-        <button mat-raised-button color="accent" class="macro-cmd" >
+        <button mat-raised-button color="accent" class="macro-cmd" (click)="executeBack()">
           <mat-icon svgIcon="back"></mat-icon> BACK
         </button>
-        <button mat-raised-button color="accent" class="macro-cmd" >
+        <button mat-raised-button color="accent" class="macro-cmd" (click)="executeNext()">
           NEXT <mat-icon svgIcon="next"></mat-icon> 
         </button>
       </ng-container>
@@ -30,7 +30,7 @@
     </div>
     <div>
       <ng-container *ngIf="!smallMacro()">
-        <button mat-mini-fab class="macro-P btn-circ" (click)="macroStringAdd('P')">
+        <!-- <button mat-mini-fab class="macro-P btn-circ" (click)="macroStringAdd('P')">
           P
         </button>
         <button mat-mini-fab class="macro-L btn-circ" (click)="macroStringAdd('L')">
@@ -38,7 +38,7 @@
         </button>
         <button mat-mini-fab class="macro-R btn-circ" (click)="macroStringAdd('R')">
           R
-        </button>
+        </button> -->
         <ng-container *ngIf="macro.length">
           <button mat-mini-fab disabled class="macro-l btn-circ" (click)="macroStringAdd('l')">
             l
@@ -58,7 +58,7 @@
       </ng-container>
 
       <ng-container *ngIf="smallMacro()">
-        <button mat-mini-fab disabled class="macro-P btn-circ" (click)="macroStringAdd('P')">
+        <!-- <button mat-mini-fab disabled class="macro-P btn-circ" (click)="macroStringAdd('P')">
           P
         </button>
         <button mat-mini-fab disabled class="macro-L btn-circ" (click)="macroStringAdd('L')">
@@ -66,7 +66,7 @@
         </button>
         <button mat-mini-fab disabled class="macro-R btn-circ" (click)="macroStringAdd('R')">
           R
-        </button>
+        </button> -->
         <button mat-mini-fab disabled class="macro-l btn-circ" (click)="macroStringAdd('l')">
           l
         </button>

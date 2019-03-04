@@ -8,20 +8,31 @@ import { Subject, BehaviorSubject } from 'rxjs';
 export class TreeService {
   exTree = new ExclusionTree();
   treeSubj =  new BehaviorSubject<Tree>(this.exTree.root);
-  iNode: any;
-  iNodeSubj = new Subject<any>();
+  iNodeSubj = new BehaviorSubject<any>(null);
 
-  expandNode(d3node) {
-    if (d3node.data.children == null) {
+  setINodeSubj(n) { // set in d3-tree/tree.model.ts
+    this.iNodeSubj = new BehaviorSubject<any>(n);
+  }
+
+  expandNode(d3node): boolean {
+    let expanded = false;
+    if (d3node.children == null) {
+      expanded = true;
       this.exTree.expandTree(d3node);
       this.treeSubj.next(this.exTree.root);
+      if (d3node.data.name === this.iNodeSubj.value.data.name) {
+        this.inspectNode(d3node);
+      }
     }
+    return expanded;
   }
   inspectNode(d3Node) {
     this.iNodeSubj.next(d3Node);
   }
   getNode$() {
-    return this.iNodeSubj.asObservable();
+    if (this.iNodeSubj != null) {
+      return this.iNodeSubj.asObservable();
+    }
   }
   getTree$() {
     return this.treeSubj.asObservable();

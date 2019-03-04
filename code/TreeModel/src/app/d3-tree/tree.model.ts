@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { interval, Subject } from 'rxjs';
 import {takeUntil, delay} from 'rxjs/operators';
+import { TreeService } from '../tree.service';
 
 type InspectNode = {mouseDown: boolean, id: number };
 export class TreeModel {
@@ -23,6 +24,7 @@ export class TreeModel {
   mouseDown$ = new Subject<boolean>();
   nodeInspected: InspectNode;
 
+  constructor(private ts: TreeService) {}
 
   addSvgToContainer(chartContainer: any) {
     this.element = chartContainer.nativeElement;
@@ -193,13 +195,18 @@ export class TreeModel {
         .attr('stroke', 'grey');
   }
 
-  setInspectedNode(path?: string) {
-    // initialize inspected node to root
-    if (this.iNode == null) {
-      this.iNode = this.treeData.descendants()[0];
+  setInspectedNode(node?) {
+    if (node != null) {
+      this.iNode = node;
     }
-    // Callback node inspected
-    this.inspectNodeEvent(this.iNode);
+    if (this.iNode == null) {
+      // initialize inspected node to root
+      this.iNode = this.treeData.descendants()[0];
+      this.ts.setINodeSubj(this.iNode);
+    } else {
+      // Callback node inspected
+      this.inspectNodeEvent(this.iNode);
+    }
 
     d3.selectAll('circle')
       .style('fill', '#4c516d');
@@ -208,6 +215,10 @@ export class TreeModel {
       .attr('r', this.nodeRadius);
     this.nodeInspected = {mouseDown: true, id: this.iNode.data.id};
     this.mouseDown$.next(false);
+  }
+  searchForNode(key: {name: string, depth: number}) {
+    const result = this.treeData.descendants().filter(n => n.data.name === key.name && n.depth === key.depth);
+    return  result.length > 0 ? result[0] : result;
   }
 
   // events

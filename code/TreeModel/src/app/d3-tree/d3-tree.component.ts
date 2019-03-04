@@ -15,7 +15,7 @@ export class D3TreeComponent implements OnInit{
   @Output() expandNode = new EventEmitter();
   @Output() inspectNode = new EventEmitter();
 
-  treeModel: TreeModel = new TreeModel();
+  treeModel: TreeModel = new TreeModel(this.ts);
   treeData: Tree;
 
   constructor(private ts: TreeService) {
@@ -36,6 +36,17 @@ export class D3TreeComponent implements OnInit{
       this.treeModel.update();
       this.treeModel.setInspectedNode();
       this.treeData = t;
+    });
+    this.ts.getNode$().subscribe(n => {
+      if (n == null) { return; }
+      if (n.data.name !== this.treeModel.iNode.data.name) {
+        this.treeModel.setInspectedNode(n);
+      } else if (n.children == null) {
+        const updatedN = this.treeModel.searchForNode({name: n.data.name, depth: n.depth});
+        if (updatedN != null && updatedN.children != null ) {
+          this.treeModel.setInspectedNode(updatedN);
+        }
+      }
     });
   }
 
