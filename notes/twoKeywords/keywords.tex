@@ -10,6 +10,8 @@
 \newtheorem{corollary}{Corollary}[theorem]
 \newtheorem{lemma}[theorem]{Lemma}
 
+\setlength{\parindent}{0cm}
+
 \begin{document}
     
 \section{Keywords}
@@ -107,15 +109,27 @@ This result will be used later to show that whenever there are two keywords, tha
         1w_1...w_{n-2}01
     \end{align*}
 
-    In either case, there exist subwords $00$ and $11$ which would result in an unbalanced word list. Therefore $w_1 = w_n$.
-    Assume for some $k$ that $w_i = w_{n - i}; 0 \leq i \leq k$. For sake of contradiction, also assume that $w_{i + 1} \neq w_{n - i}$. Then either case of words would be in $A$.
+    In either case, there exist subwords $00$ and $11$ which would result in an unbalanced word list. Therefore $w_1 = w_n$. \\
+
+    Assume for some $k$ that $w_i = w_{n - i + 1};\ 1 \leq i \leq k$. For sake of contradiction, also assume that $w_{k + 1} \neq w_{n - (k + 1)  + 1}$. Then either $w_{k+1} = 1, w_{n - k} = 0$ or $w_{k+1} = 0, w_{n-k} = 1$. \\
+
+    When $w_{k+1} = 1, w_{n - k} = 0$ the following words would exist in $A$:
     \begin{align*}
-        &0w_0...w_i0...1w_{n-i}..w_{n} &    &0w_0...w_i1...0w_{n-i}..w_{n} \\
-        &1w_0...w_i0...1w_{n-i}..w_{n} &    &1w_0...w_i1...0w_{n-i}..w_{n} \\
-        &w_0...w_i0...1w_{n-i}..w_{n}0 &    &w_0...w_i1...0w_{n-i}..w_{n}0 \\
-        &w_0...w_i0...1w_{n-i}..w_{n}1 &    &w_0...w_i1...0w_{n-i}..w_{n}1 
+        &0w_1...w_k0...1w_{n-k + 1}..w_{n} \\
+        &1w_1...w_k0...1w_{n-k + 1}..w_{n} \\
+        &w_1...w_k0...1w_{n-k + 1}..w_{n}0 \\
+        &w_1...w_k0...1w_{n-k + 1}..w_{n}1 \\
     \end{align*}
-    In the left case $0w_0...w_i0$ is out of balance with $1w_{n-i}..w_{n}1$. In the right case $1w_0...w_i1$ is out of balance with $0w_{n-i}..w_{n}0$. Hence, $w_{n-k-1} = w_{k+1}$. Therefore, through induction, $w = \bar w$.
+
+    When $w_{k+1} = 0, w_{n - k} = 1$ the following words would exist in $A$:
+    \begin{align*}
+        &0w_1...w_k1...0w_{n-k + 1}..w_{n} \\
+        &1w_1...w_k1...0w_{n-k + 1}..w_{n} \\
+        &w_1...w_k1...0w_{n-k + 1}..w_{n}0 \\
+        &w_1...w_k1...0w_{n-k + 1}..w_{n}1 
+    \end{align*}
+
+    In the case $w_{k+1} = 1, w_{n - k} = 0$, the subwords $0w_1...w_k0$ and $1w_{n-k + 1}..w_{n}1$ would exist in $A$, making $A$ unbalanced. In the case $w_{k+1} = 1, w_{n - k} = 0$, the subwords $1w_1...w_k1$ and $0w_{n-k + 1}..w_{n}0$ would exist in $A$, making $A$ unbalanced. Hence, $w_{n-k-1} = w_{k+1}$. Therefore, through induction, $w = \bar w$.
 \end{proof}
 
 

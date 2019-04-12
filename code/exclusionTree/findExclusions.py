@@ -1,5 +1,3 @@
-import sys
-
 # USAGE: python findExclusions.py 3
 # generates an exclusion tree of height 3, you can put in other numbers than 3
 
@@ -19,8 +17,6 @@ import sys
 # sub pallendromes have already been checked in previous iterations.
 
 # The level order tree traversal sequentially prints all nodes at the same depth
-
-
 
 
 class Node:
@@ -97,8 +93,10 @@ def printLevelOrder(root):
         if node.right is not None: 
             queue.append(node.right)
 
-# excTree = buildTree(Node(exclusion='11'), 0, int(sys.argv[1]))
-excTree = buildTree(Node(exclusion='11'), 0, 3)
-printLevelOrder(excTree)
+
+if __name__ == "__main__":
+    # excTree = buildTree(Node(exclusion='11'), 0, int(sys.argv[1]))
+    excTree = buildTree(Node(exclusion='11'), 0, 3)
+    printLevelOrder(excTree)
         
 

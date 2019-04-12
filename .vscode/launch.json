@@ -5,11 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            "name": "Python: Terminal (integrated)",
+            "type": "python",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:4200",
-            "webRoot": "${workspaceFolder}/code/TreeModel"
+            "program": "${file}",
+            "console": "integratedTerminal"
         }
+
+        // {
+        //     "type": "chrome",
+        //     "request": "launch",
+        //     "name": "Launch Chrome against localhost",
+        //     "url": "http://localhost:4200",
+        //     "webRoot": "${workspaceFolder}/code/TreeModel"
+        // }
     ]
 }

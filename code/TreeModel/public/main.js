@@ -184,7 +184,7 @@ var D3TreeComponent = /** @class */ (function () {
         this.ts = ts;
         this.expandNode = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
         this.inspectNode = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
-        this.treeModel = new _tree_model__WEBPACK_IMPORTED_MODULE_2__["TreeModel"]();
+        this.treeModel = new _tree_model__WEBPACK_IMPORTED_MODULE_2__["TreeModel"](this.ts);
         this.expandTreeListener(function (d) { return _this.ts.expandNode(d); });
         this.inspectNodeListener(function (d) { return _this.ts.inspectNode(d); });
     }
@@ -202,6 +202,20 @@ var D3TreeComponent = /** @class */ (function () {
             _this.treeModel.update();
             _this.treeModel.setInspectedNode();
             _this.treeData = t;
+        });
+        this.ts.getNode$().subscribe(function (n) {
+            if (n == null) {
+                return;
+            }
+            if (n.data.name !== _this.treeModel.iNode.data.name) {
+                _this.treeModel.setInspectedNode(n);
+            }
+            else if (n.children == null) {
+                var updatedN = _this.treeModel.searchForNode({ name: n.data.name, depth: n.depth });
+                if (updatedN != null && updatedN.children != null) {
+                    _this.treeModel.setInspectedNode(updatedN);
+                }
+            }
         });
     };
     D3TreeComponent.prototype.expandTreeListener = function (callable) {
@@ -258,7 +272,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var TreeModel = /** @class */ (function () {
-    function TreeModel() {
+    function TreeModel(ts) {
+        this.ts = ts;
         this.margin = { top: 200, bottom: 90, left: 100, right: 90 };
         this.nodeRadius = 14;
         this.columnWidth = 80;
@@ -417,13 +432,19 @@ var TreeModel = /** @class */ (function () {
             .attr('stroke-width', 1)
             .attr('stroke', 'grey');
     };
-    TreeModel.prototype.setInspectedNode = function (path) {
-        // initialize inspected node to root
-        if (this.iNode == null) {
-            this.iNode = this.treeData.descendants()[0];
+    TreeModel.prototype.setInspectedNode = function (node) {
+        if (node != null) {
+            this.iNode = node;
         }
-        // Callback node inspected
-        this.inspectNodeEvent(this.iNode);
+        if (this.iNode == null) {
+            // initialize inspected node to root
+            this.iNode = this.treeData.descendants()[0];
+            this.ts.setINodeSubj(this.iNode);
+        }
+        else {
+            // Callback node inspected
+            this.inspectNodeEvent(this.iNode);
+        }
         d3__WEBPACK_IMPORTED_MODULE_0__["selectAll"]('circle')
             .style('fill', '#4c516d');
         d3__WEBPACK_IMPORTED_MODULE_0__["select"]('circle.circle' + this.iNode.data.id)
@@ -431,6 +452,10 @@ var TreeModel = /** @class */ (function () {
             .attr('r', this.nodeRadius);
         this.nodeInspected = { mouseDown: true, id: this.iNode.data.id };
         this.mouseDown$.next(false);
+    };
+    TreeModel.prototype.searchForNode = function (key) {
+        var result = this.treeData.descendants().filter(function (n) { return n.data.name === key.name && n.depth === key.depth; });
+        return result.length > 0 ? result[0] : result;
     };
     // events
     TreeModel.prototype.expandTreeEvent = function (node) { };
@@ -666,7 +691,7 @@ module.exports = ".btn-circ {\n    margin-left: 5px;\n}\n.circle {\n    margin-l
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div>\n  <h3>\n    Node Traversal Macro\n  </h3>\n  <div>\n    <div *ngIf=\"macro.length\" class=\"execute\">\n      Execute: \n      <button mat-raised-button color=\"accent\" class=\"macro-cmd\" >\n        BACK\n      </button>\n      <button mat-raised-button color=\"accent\" class=\"macro-cmd\" >\n        NEXT\n      </button>\n    </div>\n    <div *ngIf=\"macro.length\" class=\"macro-disp row\">\n      My Macro:\n      <div *ngFor=\"let m of macro.split('')\" [ngClass]=\"['macro-'+m, 'circle']\">\n        {{m}}\n      </div>\n    </div>\n    <div>\n      <button mat-mini-fab class=\"macro-P btn-circ\" (click)=\"macroStringAdd('P')\">\n        P\n      </button>\n      <button mat-mini-fab class=\"macro-L btn-circ\" (click)=\"macroStringAdd('L')\">\n        L\n      </button>\n      <button mat-mini-fab class=\"macro-l btn-circ\" (click)=\"macroStringAdd('l')\">\n        l\n      </button>\n      <button mat-mini-fab class=\"macro-R btn-circ\" (click)=\"macroStringAdd('R')\">\n        R\n      </button>\n      <button mat-mini-fab class=\"macro-r btn-circ\" (click)=\"macroStringAdd('r')\">\n        r\n      </button>\n      <button mat-mini-fab class=\"btn-circ\" (click)=\"macroStringBack()\"><mat-icon svgIcon=\"back\"></mat-icon></button>\n    </div>\n  </div>\n</div>\n"
+module.exports = "<div>\n  <h3>\n    Node Traversal Macro\n  </h3>\n  <div>\n    <div class=\"execute\">\n      Execute: \n      <ng-container *ngIf=\"macro.length\">\n        <button mat-raised-button color=\"accent\" class=\"macro-cmd\" (click)=\"executeBack()\">\n          <mat-icon svgIcon=\"back\"></mat-icon> BACK\n        </button>\n        <button mat-raised-button color=\"accent\" class=\"macro-cmd\" (click)=\"executeNext()\">\n          NEXT <mat-icon svgIcon=\"next\"></mat-icon> \n        </button>\n      </ng-container>\n      <ng-container *ngIf=\"!macro.length\">\n        <button mat-raised-button disabled color=\"accent\" class=\"macro-cmd\" >\n          <mat-icon svgIcon=\"back\"></mat-icon> BACK\n        </button>\n        <button mat-raised-button disabled color=\"accent\" class=\"macro-cmd\" >\n          NEXT <mat-icon svgIcon=\"next\"></mat-icon> \n        </button>\n      </ng-container>\n    </div>\n    <div class=\"macro-disp row\">\n      My Macro:\n      <div *ngFor=\"let m of macro.split('')\" [ngClass]=\"['macro-'+m, 'circle']\">\n        {{m}}\n      </div>\n    </div>\n    <div>\n      <ng-container *ngIf=\"!smallMacro()\">\n        <!-- <button mat-mini-fab class=\"macro-P btn-circ\" (click)=\"macroStringAdd('P')\">\n          P\n        </button>\n        <button mat-mini-fab class=\"macro-L btn-circ\" (click)=\"macroStringAdd('L')\">\n          L\n        </button>\n        <button mat-mini-fab class=\"macro-R btn-circ\" (click)=\"macroStringAdd('R')\">\n          R\n        </button> -->\n        <ng-container *ngIf=\"macro.length\">\n          <button mat-mini-fab disabled class=\"macro-l btn-circ\" (click)=\"macroStringAdd('l')\">\n            l\n          </button>\n          <button mat-mini-fab disabled class=\"macro-r btn-circ\" (click)=\"macroStringAdd('r')\">\n            r\n          </button>\n        </ng-container>\n        <ng-container *ngIf=\"!macro.length\">\n          <button mat-mini-fab class=\"macro-l btn-circ\" (click)=\"macroStringAdd('l')\">\n            l\n          </button>\n          <button mat-mini-fab class=\"macro-r btn-circ\" (click)=\"macroStringAdd('r')\">\n            r\n          </button>\n        </ng-container>\n      </ng-container>\n\n      <ng-container *ngIf=\"smallMacro()\">\n        <!-- <button mat-mini-fab disabled class=\"macro-P btn-circ\" (click)=\"macroStringAdd('P')\">\n          P\n        </button>\n        <button mat-mini-fab disabled class=\"macro-L btn-circ\" (click)=\"macroStringAdd('L')\">\n          L\n        </button>\n        <button mat-mini-fab disabled class=\"macro-R btn-circ\" (click)=\"macroStringAdd('R')\">\n          R\n        </button> -->\n        <button mat-mini-fab disabled class=\"macro-l btn-circ\" (click)=\"macroStringAdd('l')\">\n          l\n        </button>\n        <button mat-mini-fab disabled class=\"macro-r btn-circ\" (click)=\"macroStringAdd('r')\">\n          r\n        </button>\n      </ng-container>\n\n      <button mat-mini-fab class=\"btn-circ\" (click)=\"macroStringBack()\"><mat-icon svgIcon=\"back\"></mat-icon></button>\n    </div>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -685,6 +710,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
 /* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
 /* harmony import */ var _tree_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../tree.service */ "./src/app/tree.service.ts");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
+
 
 
 
@@ -694,14 +721,68 @@ var MacroComponent = /** @class */ (function () {
     function MacroComponent(ts, iconRegistry, sanitizer) {
         this.ts = ts;
         this.macro = '';
+        this.awaitExpandNodeNameSubj = new rxjs__WEBPACK_IMPORTED_MODULE_5__["BehaviorSubject"]('');
         iconRegistry.addSvgIcon('back', sanitizer.bypassSecurityTrustResourceUrl('assets/back.svg'));
         iconRegistry.addSvgIcon('next', sanitizer.bypassSecurityTrustResourceUrl('assets/next.svg'));
     }
+    MacroComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        var combined = Object(rxjs__WEBPACK_IMPORTED_MODULE_5__["combineLatest"])(this.ts.getNode$(), this.awaitExpandNodeNameSubj.asObservable());
+        combined.subscribe(function (_a) {
+            var node = _a[0], name = _a[1];
+            // Macro sought to reach node not yet expanded to in exclusion tree as well as d3-tree
+            // Once expanded, then executed macro
+            if (node.data.name === name) { // expanded
+                if (node.children != null) {
+                    _this.inspectedNode = node;
+                    _this.executeNext();
+                }
+            }
+            _this.inspectedNode = node;
+        });
+    };
     MacroComponent.prototype.macroStringAdd = function (char) {
         this.macro += char;
     };
     MacroComponent.prototype.macroStringBack = function () {
         this.macro = this.macro.slice(0, this.macro.length - 1);
+    };
+    MacroComponent.prototype.smallMacro = function () {
+        return this.macro === 'l' || this.macro === 'r';
+    };
+    MacroComponent.prototype.executeNext = function () {
+        if (this.smallMacro()) {
+            this.smallMacroExecuteNext();
+        }
+    };
+    MacroComponent.prototype.smallMacroExecuteNext = function () {
+        if (this.ts.expandNode(this.inspectedNode)) {
+            this.awaitExpandNodeNameSubj.next(this.inspectedNode.data.name); // not working properly
+        }
+        else {
+            if (this.inspectedNode.children.length === 1) {
+                this.ts.inspectNode(this.inspectedNode.children[0]);
+            }
+            else if (this.inspectedNode.children.length === 2) {
+                if (this.macro === 'l') {
+                    this.ts.inspectNode(this.inspectedNode.children[0]);
+                }
+                else if (this.macro === 'r') {
+                    this.ts.inspectNode(this.inspectedNode.children[1]);
+                }
+            }
+        }
+    };
+    MacroComponent.prototype.executeBack = function () {
+        if (this.smallMacro()) {
+            this.smallMacroExecuteBack();
+        }
+        return;
+    };
+    MacroComponent.prototype.smallMacroExecuteBack = function () {
+        if (this.inspectedNode.parent != null) {
+            this.ts.inspectNode(this.inspectedNode.parent);
+        }
     };
     MacroComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -740,19 +821,30 @@ var TreeService = /** @class */ (function () {
     function TreeService() {
         this.exTree = new _exclusionTree__WEBPACK_IMPORTED_MODULE_2__["ExclusionTree"]();
         this.treeSubj = new rxjs__WEBPACK_IMPORTED_MODULE_3__["BehaviorSubject"](this.exTree.root);
-        this.iNodeSubj = new rxjs__WEBPACK_IMPORTED_MODULE_3__["Subject"]();
+        this.iNodeSubj = new rxjs__WEBPACK_IMPORTED_MODULE_3__["BehaviorSubject"](null);
     }
+    TreeService.prototype.setINodeSubj = function (n) {
+        this.iNodeSubj = new rxjs__WEBPACK_IMPORTED_MODULE_3__["BehaviorSubject"](n);
+    };
     TreeService.prototype.expandNode = function (d3node) {
-        if (d3node.data.children == null) {
+        var expanded = false;
+        if (d3node.children == null) {
+            expanded = true;
             this.exTree.expandTree(d3node);
             this.treeSubj.next(this.exTree.root);
+            if (d3node.data.name === this.iNodeSubj.value.data.name) {
+                this.inspectNode(d3node);
+            }
         }
+        return expanded;
     };
     TreeService.prototype.inspectNode = function (d3Node) {
         this.iNodeSubj.next(d3Node);
     };
     TreeService.prototype.getNode$ = function () {
-        return this.iNodeSubj.asObservable();
+        if (this.iNodeSubj != null) {
+            return this.iNodeSubj.asObservable();
+        }
     };
     TreeService.prototype.getTree$ = function () {
         return this.treeSubj.asObservable();

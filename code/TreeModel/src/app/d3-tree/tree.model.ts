@@ -203,11 +203,7 @@ export class TreeModel {
       // initialize inspected node to root
       this.iNode = this.treeData.descendants()[0];
       this.ts.setINodeSubj(this.iNode);
-    } else {
-      // Callback node inspected
-      this.inspectNodeEvent(this.iNode);
-    }
-
+    } 
     d3.selectAll('circle')
       .style('fill', '#4c516d');
     d3.select('circle.circle' + this.iNode.data.id)
@@ -215,6 +211,7 @@ export class TreeModel {
       .attr('r', this.nodeRadius);
     this.nodeInspected = {mouseDown: true, id: this.iNode.data.id};
     this.mouseDown$.next(false);
+    this.inspectNodeEvent(this.iNode);
   }
   searchForNode(key: {name: string, depth: number}) {
     const result = this.treeData.descendants().filter(n => n.data.name === key.name && n.depth === key.depth);
