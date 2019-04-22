@@ -73,5 +73,5 @@ def buildTexTreeString(n):
     
     
 
-n = buildWordListTree(WordListNode(words=['0', '1']), 0, 9)
+n = buildWordListTree(WordListNode(words=['0', '1']), 0, 11)
 print(buildTexTreeString(n))

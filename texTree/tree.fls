@@ -1,10 +1,10 @@
-PWD /home/william/Documents/school/research/poster/texTree
+PWD /home/william/Documents/school/research/texTree
 INPUT /etc/texmf/web2c/texmf.cnf
 INPUT /usr/share/texmf/web2c/texmf.cnf
 INPUT /usr/share/texlive/texmf-dist/web2c/texmf.cnf
 INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
-INPUT /home/william/Documents/school/research/poster/texTree/tree.tex
-OUTPUT /home/william/Documents/school/research/poster/texTree/tree.log
+INPUT /home/william/Documents/school/research/texTree/tree.tex
+OUTPUT /home/william/Documents/school/research/texTree/tree.log
 INPUT /usr/share/texlive/texmf-dist/tex/latex/standalone/standalone.cls
 INPUT /usr/share/texlive/texmf-dist/tex/latex/standalone/standalone.cls
 INPUT /usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifluatex.sty
@@ -201,9 +201,9 @@ INPUT /usr/share/texlive/texmf-dist/tex/latex/colortbl/colortbl.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/colortbl/colortbl.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
-INPUT /home/william/Documents/school/research/poster/texTree/tree.aux
-INPUT /home/william/Documents/school/research/poster/texTree/tree.aux
-OUTPUT /home/william/Documents/school/research/poster/texTree/tree.aux
+INPUT /home/william/Documents/school/research/texTree/tree.aux
+INPUT /home/william/Documents/school/research/texTree/tree.aux
+OUTPUT /home/william/Documents/school/research/texTree/tree.aux
 INPUT /usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 INPUT /usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 INPUT /usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
@@ -226,7 +226,7 @@ INPUT /usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 INPUT /usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 INPUT /usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
-OUTPUT /home/william/Documents/school/research/poster/texTree/tree.pdf
+OUTPUT /home/william/Documents/school/research/texTree/tree.pdf
 INPUT /var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map
-INPUT /home/william/Documents/school/research/poster/texTree/tree.aux
+INPUT /home/william/Documents/school/research/texTree/tree.aux
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
