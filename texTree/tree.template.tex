@@ -1,0 +1,24 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{forest}
+\usepackage{xcolor,colortbl}
+\usepackage{graphicx}
+
+
+\begin{document}
+\vspace{10cm}
+\centering
+\begin{forest}
+    [
+        {#table#}
+
+        % {# ifChildren #}
+        [
+            \includegraphics{ {#leftImg#}.pdf }
+        ]
+        [
+            \includegraphics{ {#rightImg#}.pdf }
+        ]
+        % {# endIf #}
+    ]
+\end{forest}
+\end{document}
