@@ -57,23 +57,14 @@ def buildWordListTree(n, currentDepth, maxDepth):
         
     return n
 
-def buildTable(n):
-    if n == None: return ""
-    rows = []
-    for w in n.words:
-        cells = ["\t\t<TD BGCOLOR=\""+("blue" if c == "0" else "red")+"\">"+c+"</TD>" for c in w]
-        rows.append("\t<TR>\n"+"\n".join(cells)+"\n\t</TR>")
-    return "<<TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\">\n" + "\n".join(rows) + "\n</TABLE>>"
-
 def buildGraph(n, graph):
     if n == None: return
-    red = "0x{:02x}".format(int(float(sum([1 for c in n.words[0] if c == "0"]))/ len(n.words[0]) * 255))[2:]
-    blue = "0x{:02x}".format(int(float(sum([1 for c in n.words[0] if c == "1"]))/ len(n.words[0]) * 255))[2:]
+    red = "0x{:02x}".format(int(float(sum([1 for c in n.words[0] if c == "1"]))/ len(n.words[0]) * 255))[2:]
+    blue = "0x{:02x}".format(int(float(sum([1 for c in n.words[0] if c == "0"]))/ len(n.words[0]) * 255))[2:]
     graph.node(n.id, "", width=str(0.1 * len(n.words[0])), height=str(0.1*len(n.words)), style='filled', fillcolor="#"+red+"00"+blue)
     if n.parent: graph.edge(n.parent.id, n.id)
     for c in n.children:
         buildGraph(c, graph)
-
     
 if __name__ == "__main__":
     if len(sys.argv) == 2: size = int(sys.argv[1])
