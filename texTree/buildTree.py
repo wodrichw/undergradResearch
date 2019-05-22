@@ -67,7 +67,9 @@ def buildTable(n):
 
 def buildGraph(n, graph):
     if n == None: return
-    graph.node(n.id, buildTable(n))
+    red = "0x{:02x}".format(int(float(sum([1 for c in n.words[0] if c == "0"]))/ len(n.words[0]) * 255))[2:]
+    blue = "0x{:02x}".format(int(float(sum([1 for c in n.words[0] if c == "1"]))/ len(n.words[0]) * 255))[2:]
+    graph.node(n.id, "", width=str(0.1 * len(n.words[0])), height=str(0.1*len(n.words)), style='filled', fillcolor="#"+red+"00"+blue)
     if n.parent: graph.edge(n.parent.id, n.id)
     for c in n.children:
         buildGraph(c, graph)
@@ -78,6 +80,7 @@ if __name__ == "__main__":
     else: size = 5
 
     tree = buildWordListTree(WordListNode(words=["0","1"]), 0, size)
-    s = graphviz.Digraph('structs', node_attr={'shape': 'plaintext'}, format="jpeg")
+    s = graphviz.Digraph(uuid.uuid4().hex, node_attr={'shape': 'box'}, format="jpeg")
     buildGraph(tree, s)
+    # s.view()
     s.render("output/tree"+str(size))
